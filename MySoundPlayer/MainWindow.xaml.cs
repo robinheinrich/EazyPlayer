@@ -7,6 +7,7 @@ using Microsoft.Win32;
 using System.Collections.ObjectModel;
 using System;
 using System.Windows.Threading;
+using System.Windows.Input;
 
 namespace MySoundPlayer
 {
@@ -42,8 +43,53 @@ namespace MySoundPlayer
             TrackEnd.Value = 0;
             TrackStartLabel.Content = "0 s";
             TrackEndLabel.Content = "0 s";
+
+            this.PreviewKeyDown += MainWindow_PreviewKeyDown;
+
+            CommandBindings.Add(new CommandBinding(PlayCommand, PlayCommand_Executed));
+            InputBindings.Add(new KeyBinding(PlayCommand, new KeyGesture(Key.Space)));
+
+
+        }
+        //Router für Tastendrücke
+        public static readonly RoutedUICommand PlayCommand = new RoutedUICommand("PlayCommand", "PlayCommand", typeof(MainWindow));
+
+        private void PlayCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            PlaySoundButton_Click(OKButton, null); // Optional direkt weiterleiten
         }
 
+        /// <summary>
+        /// Event-Handler für Tastendrücke im Hauptfenster
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MainWindow_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            switch(e.Key)
+            {
+                case Key.Space:
+                    e.Handled = true; // Standardverhalten (z. B. Button drücken) verhindern
+                    PlayCommand.Execute(null, this); // Ausgewählten Track abspielen "Go"
+                    break;
+
+                case Key.Escape:
+                    e.Handled = true; // Standardverhalten (z. B. Fenster schließen) verhindern
+                    StopAllSoundsButton_Click(OKButton, null); // Alle Sounds stoppen "Stop All Sound"
+                    break;
+                case Key.L:
+                    e.Handled = true; // Standardverhalten (z. B. Button drücken) verhindern
+                    AddSoundButton_Click(OKButton, null); // Sound der Liste hinzufügen
+                    break;
+                default:
+                    // Andere Tasten ignorieren
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Startet den Timer, der die aktuelle Positionen für alle Trracks aktualisiert
+        /// </summary>
         private void StartSliderUpdateTimer()
         {
             sliderTimer.Tick += delegate (object sender, EventArgs e)
@@ -60,13 +106,21 @@ namespace MySoundPlayer
             sliderTimer.Start();
         }
 
+        /// <summary>
+        /// Startet die Wiedergabe der Sounddatei an der angegebenen Position in der Liste
+        /// </summary>
+        /// <param name="Index"></param>
         public void StartTrack(int Index)
         {
             Soundfile sf = SoundListBox.Items.GetItemAt(Index) as Soundfile; // Nächste Sounddatei in der Liste abspielen (nicht selektierte Sounddatei)
             sf.SetVolume((float)(VolumeSlider.Value / 100) * (float)(TrackVolume.Value / 100));
             sf.Play(); // Abspielen der Sounddatei
         }
-
+        /// <summary>
+        /// Event-Handler für den Klick auf den "Play Sound" Button
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void PlaySoundButton_Click(object sender, RoutedEventArgs e)
         {
 
@@ -94,6 +148,11 @@ namespace MySoundPlayer
             }
         }
 
+        /// <summary>
+        /// Event-Handler für den Klick auf den "Stop All Sounds" Button
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void StopAllSoundsButton_Click(object sender, RoutedEventArgs e)
         {
             foreach (Soundfile sf in Soundfiles)
@@ -106,6 +165,11 @@ namespace MySoundPlayer
             }
         }
 
+        /// <summary>
+        /// Event-Handler für den Klick auf den "Add Sound" Button
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void AddSoundButton_Click(object sender, RoutedEventArgs e)
         {
             var openFileDialog = new OpenFileDialog
@@ -127,8 +191,9 @@ namespace MySoundPlayer
                 sf = SoundListBox.SelectedItem as Soundfile; // Ausgewählte Sounddatei
                 if (sf != null)
                 {
+                    TrackStart.Maximum = (int)sf.Duration; // Setzt das Maximum des Startzeitpunkt-Sliders auf die Dauer der Datei
                     TrackStart.Value = 0; // Setzt den Startzeitpunkt auf 0
-                    TrackEnd.Maximum = (double)sf.Duration; // Setzt das Maximum des Endzeitpunkt-Sliders auf die Dauer der Datei
+                    TrackEnd.Maximum = (int)sf.Duration; // Setzt das Maximum des Endzeitpunkt-Sliders auf die Dauer der Datei
                     TrackEnd.Value = sf.Duration; // Setzt den Endzeitpunkt auf Ende der Datei
                 }
             }
@@ -143,12 +208,17 @@ namespace MySoundPlayer
         {
             if (VolumeLabel != null && IsLoaded)
                 VolumeLabel.Content = $"{(int)VolumeSlider.Value} %";
+            float MasterVolume = (float)(VolumeSlider.Value / 100);
+
             foreach (Soundfile sf in Soundfiles)
             {
-                sf.SetVolume((float)(VolumeSlider.Value / 100) * (float)(TrackVolume.Value / 100)); // Setzt die Lautstärke der Sounddatei
+                sf.SetVolume(sf.TrackVolume * MasterVolume); // Setzt die Lautstärke der Sounddatei
             }
         }
 
+        /// <summary>
+        /// Füllt die ComboBox mit den verfügbaren Audioausgabegeräten
+        /// </summary>
         private void PopulateAudioDevices()
         {
             AudioDevices = Soundfiles.ElementAt(0).GetAudioDevices(); // Audioausgabegeräte abrufen
@@ -175,7 +245,7 @@ namespace MySoundPlayer
             }
             Soundfile sf = SoundListBox.SelectedItem as Soundfile; // Ausgewählte Sounddatei
             cmbAudioDevices.SelectedIndex = sf.UsedAudiodevice; // Zeigt das ausgewählte Audiogerät der Sounddatei an
-            TrackVolume.Value = sf.GetVolume(); // Setzt die Lautstärke der Sounddatei auf den Track Volume Slider
+            TrackVolume.Value = sf.TrackVolume * 100; // Setzt die Lautstärke der Sounddatei auf den Track Volume Slider
         }
 
         private void TrackVolumeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -186,7 +256,8 @@ namespace MySoundPlayer
             if (SoundListBox.SelectedIndex < 0) return;
 
             Soundfile sf = SoundListBox.SelectedItem as Soundfile; // Ausgewählte Sounddatei
-            sf.SetVolume((float)(TrackVolume.Value / 100)); // Setzt die Lautstärke der Sounddatei
+            sf.TrackVolume = (float)(TrackVolume.Value / 100); // Setzt die Track-Lautstärke der Sounddatei
+            sf.SetVolume(sf.TrackVolume * (float)(VolumeSlider.Value / 100)); // Setzt die kombinierte Lautstärke der Sounddatei inklusive Master
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -265,5 +336,9 @@ namespace MySoundPlayer
             Soundfile sf = SoundListBox.SelectedItem as Soundfile; // Ausgewählte Sounddatei
             sf.SetEnd(TimeSpan.FromSeconds((double)TrackEnd.Value)); // Setzt den Endzeitpunkt der Sounddatei
         }
+
+
     }
+
+
 }

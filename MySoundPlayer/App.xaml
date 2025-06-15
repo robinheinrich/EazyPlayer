@@ -35,6 +35,20 @@
             <Setter Property="FontSize" Value="{StaticResource StandardFontSize}"/>
         </Style>
 
+        <Style TargetType="ListBox">
+            <Setter Property="Background" Value="DarkBlue"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontFamily" Value="{StaticResource StandardFontFamily}"/>
+            <Setter Property="FontSize" Value="{StaticResource StandardFontSize}"/>
+        </Style>
+        <Style TargetType="ListBoxItem">
+            <Setter Property="Background" Value="DarkBlue"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontFamily" Value="{StaticResource StandardFontFamily}"/>
+            <Setter Property="FontSize" Value="{StaticResource StandardFontSize}"/>
+        </Style>
+        
+        
         <!-- ComboBox Style -->
         <Style TargetType="ComboBox">
             <Setter Property="Foreground" Value="{StaticResource TextColorStandard}"/>

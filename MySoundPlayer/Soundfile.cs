@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
 
@@ -20,6 +21,7 @@ namespace MySoundPlayer.Audio
         private IWavePlayer outputDevice;
         private AudioFileReader audioFile;
         private ISampleProvider trimmedProvider;
+        private VolumeSampleProvider volumeProvider;
 
         public TimeSpan startTime { get; set; } = TimeSpan.Zero;
         public TimeSpan endTime { get; set; }
@@ -27,7 +29,7 @@ namespace MySoundPlayer.Audio
         public string DisplayName { get; private set; }
         public bool IsPlaying { get; private set; } = false;
         public int UsedAudiodevice { get; internal set; } = 1;
-
+        public float TrackVolume { get; set; } = 1.0f; // Default volume set to 1.0 (100%)
         public double Duration => audioFile?.TotalTime.TotalSeconds ?? 0;
         public double AudioFileCurrentTime => audioFile?.CurrentTime.TotalSeconds ?? 0;
 
@@ -85,7 +87,10 @@ namespace MySoundPlayer.Audio
                 SkipOver = TimeSpan.FromSeconds(startSec),
                 Take = TimeSpan.FromSeconds(endSec - startSec)
             };
+            volumeProvider = new VolumeSampleProvider(trimmedProvider);
+            volumeProvider.Volume = 1.0f;
 
+            trimmedProvider = volumeProvider;
             DisplayName = System.IO.Path.GetFileName(filePath);
 
             try
@@ -124,6 +129,26 @@ namespace MySoundPlayer.Audio
                 outputDevice.Init(trimmedProvider);
             }
         }
+
+        public async void FadeOutAndStop(float durationSeconds = 2.0f, int steps = 20)
+        {
+            if (volumeProvider == null || outputDevice == null)
+                return;
+
+            float initialVolume = volumeProvider.Volume;
+            float step = initialVolume / steps;
+            int delay = (int)(durationSeconds * 1000 / steps);
+
+            for (int i = 0; i < steps; i++)
+            {
+                volumeProvider.Volume -= step;
+                await Task.Delay(delay);
+            }
+
+            Stop(); // Danach vollständig stoppen
+        }
+
+
 
         public void SetStart(TimeSpan? start = null)
         {

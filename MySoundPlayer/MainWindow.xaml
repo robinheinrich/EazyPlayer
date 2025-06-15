@@ -12,8 +12,8 @@
         <StackPanel Margin="10" Width="Auto">
             <StackPanel Margin="10" Orientation="Horizontal">
                 <Label Content="My Sound Player" FontSize="24" FontWeight="Bold" Margin="0,0,0,20" Height="50" Width="656" VerticalAlignment="Center"/>
-                <Button Content="Go" Background="Green" Width="100" Height="60" Click="PlaySoundButton_Click" VerticalAlignment="Center"/>
-                <Button Content="Stop All" Background="Red" Margin="25 0 0 0" Width="100" Height="60" Click="StopAllSoundsButton_Click" VerticalAlignment="Center"/>
+                <Button x:Name="OKButton" Content="Go" Background="Green" Width="100" Height="60" Click="PlaySoundButton_Click" VerticalAlignment="Center"/>
+                <Button x:Name="StopAllButton" Content="Stop All" Background="Red" Margin="25 0 0 0" Width="100" Height="60" Click="StopAllSoundsButton_Click" VerticalAlignment="Center"/>
             </StackPanel>
 
             <StackPanel Margin="10" Width="Auto" Orientation="Horizontal">
@@ -22,7 +22,7 @@
                         <DataTemplate>
                             <Grid Margin="5">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="500" />
+                                    <ColumnDefinition Width="600" />
                                     <ColumnDefinition Width="250" />
                                     <ColumnDefinition Width="50" />
                                 </Grid.ColumnDefinitions>
@@ -55,17 +55,17 @@
                     <ComboBox x:Name="cmbAudioDevices" Width="250" ItemTemplate="{StaticResource ComboBoxItemTemplate}" SelectionChanged="ComboBox_SelectionChanged" />
                         <Label Content="Track Volume:" VerticalAlignment="Center" />
                     <Grid>
-                        <Slider x:Name="TrackVolume" Width="200" Minimum="0" Maximum="100" Value="90" TickFrequency="1" IsSnapToTickEnabled="True" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1" ValueChanged="TrackVolumeSlider_ValueChanged" SmallChange="2"/>
+                        <Slider x:Name="TrackVolume" Width="180" Minimum="0" Maximum="100" Value="90" TickFrequency="1" IsSnapToTickEnabled="True" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1" ValueChanged="TrackVolumeSlider_ValueChanged" SmallChange="2"/>
                         <Label x:Name="TrackVolumeLabel" VerticalAlignment="Center" HorizontalAlignment="Right" Grid.Column="2" />
                     </Grid>
                     <Label Content="Track Start:" VerticalAlignment="Center" />
                     <Grid>
-                        <Slider x:Name="TrackStart" Width="200" Minimum="0" Maximum="100" Value="90" TickFrequency="1" IsSnapToTickEnabled="True" HorizontalAlignment="Left" VerticalAlignment="Bottom" ValueChanged="TrackStartSlider_ValueChanged" SmallChange="2"/>
+                        <Slider x:Name="TrackStart" Width="180" Minimum="0" Maximum="100" Value="90" TickFrequency="1" IsSnapToTickEnabled="True" HorizontalAlignment="Left" VerticalAlignment="Bottom" ValueChanged="TrackStartSlider_ValueChanged" SmallChange="2"/>
                         <Label x:Name="TrackStartLabel" VerticalAlignment="Center" HorizontalAlignment="Right" Grid.Column="2" />
                     </Grid>
                     <Label Content="Track End:" VerticalAlignment="Center" />
                     <Grid>
-                        <Slider x:Name="TrackEnd" Width="200" Minimum="0" Maximum="100" Value="90" TickFrequency="1" IsSnapToTickEnabled="True" HorizontalAlignment="Left" VerticalAlignment="Top" ValueChanged="TrackEndSlider_ValueChanged" SmallChange="2"/>
+                        <Slider x:Name="TrackEnd" Width="180" Minimum="0" Maximum="100" Value="90" TickFrequency="1" IsSnapToTickEnabled="True" HorizontalAlignment="Left" VerticalAlignment="Top" ValueChanged="TrackEndSlider_ValueChanged" SmallChange="2"/>
                         <Label x:Name="TrackEndLabel" VerticalAlignment="Center" HorizontalAlignment="Right" Grid.Column="2" />
                     </Grid>
                 </StackPanel>
