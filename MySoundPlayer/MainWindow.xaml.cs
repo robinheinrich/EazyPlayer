@@ -27,14 +27,21 @@ namespace MySoundPlayer
             InitializeComponent();
 
             //Startwerte für das Programm
-            VolumeLabel.Content = $"{(int)VolumeSlider.Value} %";
-            TrackVolumeLabel.Content = $"{(int)TrackVolume.Value} %";
             Soundfiles.Add(new Soundfile("")); // Null Referenz für die Sounddatei initialisieren
             SoundListBox.ItemsSource = Soundfiles;
             AudioDevices = Soundfiles.ElementAt(0).GetAudioDevices(); // Audioausgabegeräte abrufen
             PopulateAudioDevices();
             Soundfiles.Clear(); // Leere Liste initialisieren, damit die ComboBox nicht leer ist
+            
             StartSliderUpdateTimer();
+
+            VolumeLabel.Content = $"{(int)VolumeSlider.Value} %";
+            TrackVolumeLabel.Content = $"{(int)TrackVolume.Value} %";
+
+            TrackStart.Value = 0;
+            TrackEnd.Value = 0;
+            TrackStartLabel.Content = "0 s";
+            TrackEndLabel.Content = "0 s";
         }
 
         private void StartSliderUpdateTimer()
@@ -56,7 +63,6 @@ namespace MySoundPlayer
         public void StartTrack(int Index)
         {
             Soundfile sf = SoundListBox.Items.GetItemAt(Index) as Soundfile; // Nächste Sounddatei in der Liste abspielen (nicht selektierte Sounddatei)
-            //Console.WriteLine($"Spiele Sound: {sf.DisplayName} auf Gerät: {sf.GetUsedAudioDeviceByID(sf.UsedAudiodevice)} mit Lautstärke {(TrackVolume.Value * VolumeSlider.Value) / 100}");
             sf.SetVolume((float)(VolumeSlider.Value / 100) * (float)(TrackVolume.Value / 100));
             sf.Play(); // Abspielen der Sounddatei
         }
@@ -70,7 +76,6 @@ namespace MySoundPlayer
                 {
                     return;
                 }
-                //Console.WriteLine($"Spiele Sound: {sf.DisplayName} auf Gerät: {sf.GetUsedAudioDeviceByID(sf.UsedAudiodevice)} mit Lautstärke {(TrackVolume.Value * VolumeSlider.Value) / 100}");
                 sf.SetVolume((float)(VolumeSlider.Value / 100) * (float)(TrackVolume.Value / 100));
                 sf.Play(); // Optional: abspielen
                 int SelectedSoundfileIndex = SoundListBox.SelectedIndex; // Index der ausgewählten Sounddatei
@@ -119,6 +124,13 @@ namespace MySoundPlayer
                 Soundfiles.Add(sf);
                 SoundListBox.Items.Refresh(); // damit neue Elemente sofort sichtbar werden
                 SoundListBox.SelectedIndex = SoundListBox.Items.Count - 1; // Setzt den Fokus auf das neu hinzugefügte Element
+                sf = SoundListBox.SelectedItem as Soundfile; // Ausgewählte Sounddatei
+                if (sf != null)
+                {
+                    TrackStart.Value = 0; // Setzt den Startzeitpunkt auf 0
+                    TrackEnd.Maximum = (double)sf.Duration; // Setzt das Maximum des Endzeitpunkt-Sliders auf die Dauer der Datei
+                    TrackEnd.Value = sf.Duration; // Setzt den Endzeitpunkt auf Ende der Datei
+                }
             }
         }
 
@@ -229,6 +241,29 @@ namespace MySoundPlayer
                     }
                 }
             });
+        }
+
+        private void TrackStartSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (SoundListBox.SelectedItem == null)
+            {
+                return; // Keine Sounddatei ausgewählt in der Liste
+            }
+            TrackStartLabel.Content = $"{TrackStart.Value} s"; // Aktualisiert die Anzeige des Startzeitpunkts
+            Soundfile sf = SoundListBox.SelectedItem as Soundfile; // Ausgewählte Sounddatei
+            sf.SetStart(TimeSpan.FromSeconds((double)TrackStart.Value)); // Setzt den Startzeitpunkt der Sounddatei
+        }
+
+        private void TrackEndSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (SoundListBox.SelectedItem == null)
+            {
+                return; // Keine Sounddatei ausgewählt in der Liste
+            }
+
+            TrackEndLabel.Content = $"{TrackEnd.Value} s"; // Aktualisiert die Anzeige des Endzeitpunkts
+            Soundfile sf = SoundListBox.SelectedItem as Soundfile; // Ausgewählte Sounddatei
+            sf.SetEnd(TimeSpan.FromSeconds((double)TrackEnd.Value)); // Setzt den Endzeitpunkt der Sounddatei
         }
     }
 }
