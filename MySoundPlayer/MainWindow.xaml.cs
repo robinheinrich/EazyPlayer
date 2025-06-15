@@ -227,6 +227,11 @@ namespace MySoundPlayer
                 cmbAudioDevices.SelectedIndex = 0; // Erstes Gerät auswählen
         }
 
+        /// <summary>
+        /// Event-Handler für die Auswahl eines Audiogeräts in der ComboBox
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (SoundListBox.SelectedItem == null)
@@ -237,6 +242,11 @@ namespace MySoundPlayer
             sf.SetOutputDevice(cmbAudioDevices.SelectedIndex); // Setzt das ausgewählte Audiogerät der Sounddatei
         }
 
+        /// <summary>
+        /// Event-Handler für die Auswahl einer Sounddatei in der ListBox
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void SoundListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (SoundListBox.SelectedItem == null)
@@ -248,6 +258,11 @@ namespace MySoundPlayer
             TrackVolume.Value = sf.TrackVolume * 100; // Setzt die Lautstärke der Sounddatei auf den Track Volume Slider
         }
 
+        /// <summary>
+        /// Event-Handler für die Änderung der Track-Lautstärke
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void TrackVolumeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (TrackVolumeLabel != null && IsLoaded)
@@ -260,6 +275,11 @@ namespace MySoundPlayer
             sf.SetVolume(sf.TrackVolume * (float)(VolumeSlider.Value / 100)); // Setzt die kombinierte Lautstärke der Sounddatei inklusive Master
         }
 
+        /// <summary>
+        /// Event-Handler für das Schließen des Fensters
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             // Timer stoppen, um Ressourcen freizugeben
@@ -273,7 +293,11 @@ namespace MySoundPlayer
             }
         }
 
-
+        /// <summary>
+        /// Event-Handler für das Aktivieren des Auto-Play-Next-Features
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
         {
             var checkbox = sender as CheckBox;
@@ -285,6 +309,11 @@ namespace MySoundPlayer
             }
         }
 
+        /// <summary>
+        /// Event-Handler für das Deaktivieren des Auto-Play-Next-Features
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
             var checkbox = sender as CheckBox;
@@ -296,7 +325,11 @@ namespace MySoundPlayer
             }
         }
 
-
+        /// <summary>
+        /// Event-Handler für das Beenden der Wiedergabe einer Sounddatei
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Soundfile_PlaybackFinished(object sender, EventArgs e)
         {
             Dispatcher.Invoke(() =>
@@ -314,6 +347,11 @@ namespace MySoundPlayer
             });
         }
 
+        /// <summary>
+        /// Event-Handler für die Änderung des Startzeitpunkts des Tracks
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void TrackStartSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (SoundListBox.SelectedItem == null)
@@ -324,7 +362,12 @@ namespace MySoundPlayer
             Soundfile sf = SoundListBox.SelectedItem as Soundfile; // Ausgewählte Sounddatei
             sf.SetStart(TimeSpan.FromSeconds((double)TrackStart.Value)); // Setzt den Startzeitpunkt der Sounddatei
         }
-
+        
+        /// <summary>
+        /// Event-Handler für die Änderung des Endzeitpunkts des Tracks
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void TrackEndSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (SoundListBox.SelectedItem == null)
