@@ -176,18 +176,21 @@ namespace MySoundPlayer
             {
                 Title = "Sounddatei auswählen",
                 Filter = "Audio-Dateien (*.wav;*.mp3;*.mp4)|*.wav;*.mp3;*.mp4|Alle Dateien (*.*)|*.*",
-                Multiselect = false //Todo: Mehrfachauswahl implemenentieren
+                Multiselect = true //Todo: Mehrfachauswahl implemenentieren
             };
 
             if (openFileDialog.ShowDialog() == true)
             {
-                string selectedFile = openFileDialog.FileName;
-                // Beispiel: neue Soundfile zur Liste hinzufügen
-                Soundfile sf = new Soundfile(selectedFile);
-                sf.PlaybackFinished += Soundfile_PlaybackFinished;
-                Soundfiles.Add(sf);
+                Soundfile sf;
+                foreach (var selectedFile in openFileDialog.FileNames)
+                {
+                    sf = new Soundfile(selectedFile);
+                    sf.PlaybackFinished += Soundfile_PlaybackFinished;
+                    Soundfiles.Add(sf);
+                }
                 SoundListBox.Items.Refresh(); // damit neue Elemente sofort sichtbar werden
-                SoundListBox.SelectedIndex = SoundListBox.Items.Count - 1; // Setzt den Fokus auf das neu hinzugefügte Element
+                SoundListBox.SelectedIndex = SoundListBox.Items.Count - 1; // Setzt den Fokus auf das letzte Element in der Liste
+                
                 sf = SoundListBox.SelectedItem as Soundfile; // Ausgewählte Sounddatei
                 if (sf != null)
                 {

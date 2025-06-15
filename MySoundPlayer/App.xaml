@@ -13,6 +13,9 @@
         <SolidColorBrush x:Key="BackgroundColorIsSelected" Color="Black"/>
         <SolidColorBrush x:Key="BackgroundColorStandard" Color="Black"/>
 
+        <SolidColorBrush x:Key="ListItemEvenBackground" Color="#5000FF"/>
+        <SolidColorBrush x:Key="ListItemOddBackground" Color="#3300FF"/>
+
         <FontFamily x:Key="StandardFontFamily">Segoe UI</FontFamily>
         <sys:Double x:Key="StandardFontSize">14</sys:Double>
 

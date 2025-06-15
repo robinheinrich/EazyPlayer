@@ -17,7 +17,49 @@
             </StackPanel>
 
             <StackPanel Margin="10" Width="Auto" Orientation="Horizontal">
-                <ListBox x:Name="SoundListBox" Width="900" ItemsSource="{Binding}" SelectionMode="Single" SelectionChanged="SoundListBox_SelectionChanged">
+
+                <ListBox x:Name="SoundListBox" Width="900"  AlternationCount="2" ItemsSource="{Binding}" SelectionMode="Single" SelectionChanged="SoundListBox_SelectionChanged">
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="SnapsToDevicePixels" Value="True"/>
+                            <Setter Property="Background" Value="{StaticResource ListItemOddBackground}"/>
+                            <Setter Property="BorderThickness" Value="0"/>
+                            <Setter Property="BorderBrush" Value="Transparent"/>
+                            <Setter Property="Padding" Value="4"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ListBoxItem">
+                                        <Border x:Name="Bd"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            SnapsToDevicePixels="True">
+                                            <ContentPresenter />
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter TargetName="Bd" Property="BorderBrush" Value="LimeGreen"/>
+                                                <Setter TargetName="Bd" Property="BorderThickness" Value="2"/>
+                                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource BackgroundColorIsSelected}"/>
+                                            </Trigger>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="Bd" Property="BorderBrush" Value="Gray"/>
+                                                <Setter TargetName="Bd" Property="BorderThickness" Value="1"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+
+                            <!-- Alternation Backgrounds -->
+                            <Style.Triggers>
+                                <Trigger Property="ItemsControl.AlternationIndex" Value="0">
+                                    <Setter Property="Background" Value="{StaticResource ListItemEvenBackground}"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <Grid Margin="5">
