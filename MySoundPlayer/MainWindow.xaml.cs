@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System;
 using System.Windows.Threading;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace MySoundPlayer
 {
@@ -21,6 +22,7 @@ namespace MySoundPlayer
         private List<string> AudioDevices; // Liste für Audioausgabegeräte
         private DispatcherTimer playbackTimer;
         DispatcherTimer sliderTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(250) };
+        private Point _dragStartPoint;
 
         // Konstruktor der MainWindow-Klasse
         public MainWindow()
@@ -50,7 +52,11 @@ namespace MySoundPlayer
             CommandBindings.Add(new CommandBinding(PlayCommand, PlayCommand_Executed));
             InputBindings.Add(new KeyBinding(PlayCommand, new KeyGesture(Key.Space)));
 
-
+            SoundListBox.PreviewMouseLeftButtonDown += SoundListBox_PreviewMouseLeftButtonDown;
+            SoundListBox.PreviewMouseMove += SoundListBox_PreviewMouseMove;
+            SoundListBox.DragEnter += SoundListBox_DragEnter;
+            SoundListBox.Drop += SoundListBox_Drop;
+            SoundListBox.DragOver += SoundListBox_DragOver;
         }
         //Router für Tastendrücke
         public static readonly RoutedUICommand PlayCommand = new RoutedUICommand("PlayCommand", "PlayCommand", typeof(MainWindow));
@@ -170,7 +176,7 @@ namespace MySoundPlayer
         /// Event-Handler für den Klick auf den "Stop All Sounds" Button
         /// </summary>
         /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param="e"></param>
         private void StopAllSoundsButton_Click(object sender, RoutedEventArgs e)
         {
             //Wir wollen alle Sounds stoppen, also erstmal filtern und dann stoppen.
@@ -189,7 +195,7 @@ namespace MySoundPlayer
         /// Event-Handler für den Klick auf den "Add Sound" Button
         /// </summary>
         /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param="e"></param>
         private void AddSoundButton_Click(object sender, RoutedEventArgs e)
         {
             var openFileDialog = new OpenFileDialog
@@ -336,7 +342,7 @@ namespace MySoundPlayer
         /// Event-Handler für die Änderung der Track-Lautstärke
         /// </summary>
         /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param="e"></param>
         private void TrackVolumeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (TrackVolumeLabel != null && IsLoaded)
@@ -353,7 +359,7 @@ namespace MySoundPlayer
         /// Event-Handler für das Schließen des Fensters
         /// </summary>
         /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param="e"></param>
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             // Timer stoppen, um Ressourcen freizugeben
@@ -371,7 +377,7 @@ namespace MySoundPlayer
         /// Event-Handler für das Aktivieren des Auto-Play-Next-Features
         /// </summary>
         /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param="e"></param>
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
         {
             var checkbox = sender as CheckBox;
@@ -387,7 +393,7 @@ namespace MySoundPlayer
         /// Event-Handler für das Deaktivieren des Auto-Play-Next-Features
         /// </summary>
         /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param="e"></param>
         private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
             var checkbox = sender as CheckBox;
@@ -403,7 +409,7 @@ namespace MySoundPlayer
         /// Event-Handler für das Beenden der Wiedergabe einer Sounddatei
         /// </summary>
         /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param="e"></param>
         private void Soundfile_PlaybackFinished(object sender, EventArgs e)
         {
             Dispatcher.Invoke(() =>
@@ -425,7 +431,7 @@ namespace MySoundPlayer
         /// Event-Handler für die Änderung des Startzeitpunkts des Tracks
         /// </summary>
         /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param="e"></param>
         private void TrackStartSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (SoundListBox.SelectedItem == null)
@@ -441,7 +447,7 @@ namespace MySoundPlayer
         /// Event-Handler für die Änderung des Endzeitpunkts des Tracks
         /// </summary>
         /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param="e"></param>
         private void TrackEndSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (SoundListBox.SelectedItem == null)
@@ -458,7 +464,7 @@ namespace MySoundPlayer
         /// Event-Handler für den Klick auf den "Fade and Stop" Button
         /// </summary>
         /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param="e"></param>
         private void FadeAndStopButton_Click(object sender, RoutedEventArgs e)
         {
             if (SoundListBox.SelectedItem == null)
@@ -472,11 +478,12 @@ namespace MySoundPlayer
         /// <summary>
         /// Event-Handler für den Klick auf den "Add Command" Button
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param="sender"></param>
+        /// <param="e"></param>
         private void AddCommand_Click(object sender, RoutedEventArgs e)
         {
-            Cues.Add(new Command("Play", Cues.ElementAt(0), 0)); // Fügt einen neuen Command hinzu, der die erste Sounddatei abspielt
+            int CurrentSelectedIndex = SoundListBox.SelectedIndex; // Aktuell ausgewählter Index in der Liste
+            Cues.Insert(CurrentSelectedIndex + 1, new Command("Play", Cues.ElementAt(CurrentSelectedIndex), 0)); // Fügt ein neues Command direkt nach dem aktuell ausgewählten Element ein und setzt dieses als Target
             SoundListBox.Items.Refresh(); // damit neue Elemente sofort sichtbar werden
         }
 
@@ -491,6 +498,114 @@ namespace MySoundPlayer
             {
                 // Setzt das TargetCue des Commands auf die ausgewählte Sounddatei
                 cmd.TargetCue = comboBox.SelectedItem as Cue;
+            }
+        }
+
+        // DragStart-Position merken
+        private void SoundListBox_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            _dragStartPoint = e.GetPosition(null);
+        }
+
+        // DragStart erkennen (optional: nur wenn Item angeklickt)
+        private void SoundListBox_PreviewMouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                Point position = e.GetPosition(null);
+                if (Math.Abs(position.X - _dragStartPoint.X) > SystemParameters.MinimumHorizontalDragDistance ||
+                    Math.Abs(position.Y - _dragStartPoint.Y) > SystemParameters.MinimumVerticalDragDistance)
+                {
+                    if (SoundListBox.SelectedItem != null)
+                    {
+                        var data = new DataObject(typeof(Cue), SoundListBox.SelectedItem);
+                        DragDrop.DoDragDrop(SoundListBox, data, DragDropEffects.Move);
+                    }
+                }
+            }
+        }
+
+        // DragEnter: Dateien oder interne Cues erlauben
+        private void SoundListBox_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(typeof(Cue)) || e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                e.Effects = DragDropEffects.Move;
+            }
+            else
+            {
+                e.Effects = DragDropEffects.None;
+            }
+            e.Handled = true;
+        }
+
+        // DragOver: Visuelles Feedback für Move
+        private void SoundListBox_DragOver(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(typeof(Cue)) || e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                e.Effects = DragDropEffects.Move;
+            }
+            else
+            {
+                e.Effects = DragDropEffects.None;
+            }
+            e.Handled = true;
+        }
+
+        // Drop: Dateien als neue Soundfiles hinzufügen ODER Cues verschieben
+        private void SoundListBox_Drop(object sender, DragEventArgs e)
+        {
+            var listBox = sender as ListBox;
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                var files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                foreach (var file in files)
+                {
+                    string ext = System.IO.Path.GetExtension(file).ToLower();
+                    if (ext == ".wav" || ext == ".mp3" || ext == ".mp4")
+                    {
+                        // Immer hinzufügen, auch wenn die Datei schon in der Liste ist
+                        var sf = new Soundfile(file);
+                        sf.PlaybackFinished += Soundfile_PlaybackFinished;
+                        Cues.Add(sf);
+                    }
+                }
+                SoundListBox.Items.Refresh();
+                SoundListBox.SelectedIndex = SoundListBox.Items.Count - 1;
+            }
+            else if (e.Data.GetDataPresent(typeof(Cue)))
+            {
+                var droppedCue = e.Data.GetData(typeof(Cue)) as Cue;
+                if (droppedCue == null) return;
+
+                // Zielindex bestimmen
+                Point dropPosition = e.GetPosition(listBox);
+                int targetIndex = -1;
+                for (int i = 0; i < listBox.Items.Count; i++)
+                {
+                    var item = listBox.ItemContainerGenerator.ContainerFromIndex(i) as ListBoxItem;
+                    if (item != null)
+                    {
+                        Rect bounds = VisualTreeHelper.GetDescendantBounds(item);
+                        Point itemPos = item.TranslatePoint(new Point(0, 0), listBox);
+                        bounds.Offset(itemPos.X, itemPos.Y);
+                        if (bounds.Contains(dropPosition))
+                        {
+                            targetIndex = i;
+                            break;
+                        }
+                    }
+                }
+                if (targetIndex == -1)
+                    targetIndex = Cues.Count - 1;
+
+                int oldIndex = Cues.IndexOf(droppedCue);
+                if (oldIndex != -1 && oldIndex != targetIndex)
+                {
+                    Cues.Move(oldIndex, targetIndex);
+                    SoundListBox.SelectedIndex = targetIndex;
+                }
             }
         }
     }

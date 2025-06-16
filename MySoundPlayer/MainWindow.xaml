@@ -7,7 +7,7 @@
         xmlns:audio="clr-namespace:MySoundPlayer.Audio"    
         xmlns:Properties="clr-namespace:MySoundPlayer.Properties" x:Class="MySoundPlayer.MainWindow"
         mc:Ignorable="d"
-        Title="MainWindow" Height="700" Width="1300"
+        Title="EazyPlayer" Height="700" Width="1300"
         Background="Black" ResizeMode="CanMinimize">
     
     <!-- Lokale Styles -->
@@ -65,7 +65,7 @@
         <!-- Header -->
         <StackPanel Margin="10" Width="Auto">
             <StackPanel Margin="10" Orientation="Horizontal">
-                <Label Content="My Sound Player" Style="{StaticResource MyHeaderStyle}" Height="Auto" Width="675" Margin="0,0,0,0" VerticalAlignment="Center"/>
+                <Label Content="EazyPlayer" Style="{StaticResource MyHeaderStyle}" Height="Auto" Width="675" Margin="0,0,0,0" VerticalAlignment="Center"/>
                 <Button x:Name="OKButton" Content="Go" Background="Green" Width="80" Height="60" Click="PlaySoundButton_Click" VerticalAlignment="Center"/>
                 <Button x:Name="FadeAndStopButton" Background="Red" Margin="25 0 0 0" Width="100" Height="60" Click="FadeAndStopButton_Click" VerticalAlignment="Center">
                     <TextBlock TextAlignment="Center">
@@ -80,50 +80,9 @@
             <!-- Middle Section -->
             <StackPanel Margin="10" Width="Auto" Orientation="Horizontal">
                 <!-- Middle Left Section -->
-                <ListBox x:Name="SoundListBox" Width="900"  AlternationCount="2" ItemsSource="{Binding}" SelectionMode="Single" SelectionChanged="SoundListBox_SelectionChanged">
-                    <ListBox.ItemContainerStyle>
-                        <Style TargetType="ListBoxItem">
-                            <Setter Property="SnapsToDevicePixels" Value="True"/>
-                            <Setter Property="Background" Value="{StaticResource ListItemOddBackground}"/>
-                            <Setter Property="BorderThickness" Value="0"/>
-                            <Setter Property="BorderBrush" Value="Transparent"/>
-                            <Setter Property="Padding" Value="4"/>
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="ListBoxItem">
-                                        <Border x:Name="Bd"
-                            Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            SnapsToDevicePixels="True">
-                                            <ContentPresenter />
-                                        </Border>
-                                        <ControlTemplate.Triggers>
-                                            <Trigger Property="IsSelected" Value="True">
-                                                <Setter TargetName="Bd" Property="BorderBrush" Value="LimeGreen"/>
-                                                <Setter TargetName="Bd" Property="BorderThickness" Value="2"/>
-                                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource BackgroundColorIsSelected}"/>
-                                            </Trigger>
-                                            <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter TargetName="Bd" Property="BorderBrush" Value="Gray"/>
-                                                <Setter TargetName="Bd" Property="BorderThickness" Value="1"/>
-                                            </Trigger>
-                                        </ControlTemplate.Triggers>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
+                <ListBox x:Name="SoundListBox" Width="900"  AlternationCount="2" ItemsSource="{Binding}" SelectionMode="Single" SelectionChanged="SoundListBox_SelectionChanged" AllowDrop="True"/>
 
-                            <!-- Alternation Backgrounds -->
-                            <Style.Triggers>
-                                <Trigger Property="ItemsControl.AlternationIndex" Value="0">
-                                    <Setter Property="Background" Value="{StaticResource ListItemEvenBackground}"/>
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </ListBox.ItemContainerStyle>
-
-                </ListBox>
-                <!-- Middle Right Section -->
+                    <!-- Middle Right Section -->
                 <TabControl x:Name="SideTabControl" SelectedIndex="1" Background="{StaticResource BackgroundColorStandard}" Foreground="{StaticResource TextColorStandard}">
                     <TabItem x:Name="SoundfileTab" Header="Soundfiles">
                         <StackPanel Margin="10" Width="Auto" Height="400" VerticalAlignment="Center">
