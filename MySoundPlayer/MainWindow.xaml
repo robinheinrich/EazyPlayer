@@ -8,11 +8,22 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="700" Width="1300"
         Background="Black">
+    
+    <!-- Lokale Styles -->
+    <Window.Resources>
+        <Style x:Key="MyHeaderStyle" TargetType="Label">
+            <Setter Property="FontSize" Value="50"/>
+            <Setter Property="FontFamily" Value="Courier New"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+    </Window.Resources>
+    
+    <!-- Meine Form -->
     <Grid Width="Auto" VerticalAlignment="Top" HorizontalAlignment="Left">
         <StackPanel Margin="10" Width="Auto">
             <StackPanel Margin="10" Orientation="Horizontal">
-                <Label Content="My Sound Player" FontSize="24" FontWeight="Bold" Margin="0,0,0,20" Height="50" Width="656" VerticalAlignment="Center"/>
-                <Button x:Name="OKButton" Content="Go" Background="Green" Width="100" Height="60" Click="PlaySoundButton_Click" VerticalAlignment="Center"/>
+                <Label Content="My Sound Player" Style="{StaticResource MyHeaderStyle}" Height="Auto" Width="675" Margin="0,0,0,0" VerticalAlignment="Center"/>
+                <Button x:Name="OKButton" Content="Go" Background="Green" Width="80" Height="60" Click="PlaySoundButton_Click" VerticalAlignment="Center"/>
                 <Button x:Name="StopAllButton" Content="Stop All" Background="Red" Margin="25 0 0 0" Width="100" Height="60" Click="StopAllSoundsButton_Click" VerticalAlignment="Center"/>
             </StackPanel>
 

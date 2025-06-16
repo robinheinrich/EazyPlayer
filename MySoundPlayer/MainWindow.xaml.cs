@@ -259,6 +259,10 @@ namespace MySoundPlayer
             Soundfile sf = SoundListBox.SelectedItem as Soundfile; // Ausgewählte Sounddatei
             cmbAudioDevices.SelectedIndex = sf.UsedAudiodevice; // Zeigt das ausgewählte Audiogerät der Sounddatei an
             TrackVolume.Value = sf.TrackVolume * 100; // Setzt die Lautstärke der Sounddatei auf den Track Volume Slider
+            TrackStart.Maximum = (int)sf.Duration; // Setzt das Maximum des Startzeitpunkt-Sliders auf die Dauer der Datei
+            TrackStart.Value = 0; // Setzt den Startzeitpunkt auf 0
+            TrackEnd.Maximum = (int)sf.Duration; // Setzt das Maximum des Endzeitpunkt-Sliders auf die Dauer der Datei
+            TrackEnd.Value = sf.Duration; // Setzt den Endzeitpunkt auf Ende der Datei
         }
 
         /// <summary>

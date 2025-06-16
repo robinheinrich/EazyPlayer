@@ -18,17 +18,16 @@
 
         <FontFamily x:Key="StandardFontFamily">Segoe UI</FontFamily>
         <sys:Double x:Key="StandardFontSize">14</sys:Double>
+        <sys:Double x:Key="LargeFontSize">18</sys:Double>
 
 
         <Style TargetType="TextBlock">
             <Setter Property="Foreground" Value="{StaticResource TextColorStandard}"/>
             <Setter Property="FontFamily" Value="{StaticResource StandardFontFamily}"/>
-            <Setter Property="FontSize" Value="{StaticResource StandardFontSize}"/>
         </Style>
-        <Style TargetType="Label">
+        <Style x:Key="StandardLabelStyle" TargetType="Label">
             <Setter Property="Foreground" Value="{StaticResource TextColorStandard}"/>
             <Setter Property="FontFamily" Value="{StaticResource StandardFontFamily}"/>
-            <Setter Property="FontSize" Value="{StaticResource StandardFontSize}"/>
         </Style>
         
         <Style TargetType="Button">
