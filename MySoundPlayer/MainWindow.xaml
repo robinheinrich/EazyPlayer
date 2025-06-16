@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MySoundPlayer"
+        xmlns:audio="clr-namespace:MySoundPlayer.Audio"    
         xmlns:Properties="clr-namespace:MySoundPlayer.Properties" x:Class="MySoundPlayer.MainWindow"
         mc:Ignorable="d"
         Title="MainWindow" Height="700" Width="1300"
@@ -16,7 +17,48 @@
             <Setter Property="FontFamily" Value="Courier New"/>
             <Setter Property="FontWeight" Value="Bold"/>
         </Style>
+
+        <!-- DataTemplate für Soundfile -->
+        <DataTemplate DataType="{x:Type audio:Soundfile}">
+            <Grid Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="600" />
+                    <ColumnDefinition Width="250" />
+                    <ColumnDefinition Width="50" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{Binding}" />
+                <Slider Minimum="0"
+                    Grid.Column="1"
+                    Maximum="{Binding Duration}"
+                    Value="{Binding CurrentPosition, Mode=TwoWay}"
+                    SmallChange="1"
+                    LargeChange="5"
+                    TickFrequency="1"
+                    IsSnapToTickEnabled="True"
+                    VerticalAlignment="Center" />
+                <CheckBox Grid.Column="2"
+                      VerticalAlignment="Center"
+                      IsChecked="{Binding IsAutoPlayNext, Mode=TwoWay}"
+                      Margin="10,0"/>
+            </Grid>
+        </DataTemplate>
+
+        <!-- DataTemplate für Command -->
+        <DataTemplate DataType="{x:Type local:Command}">
+            <Grid Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="850" />
+                    <ColumnDefinition Width="50" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{Binding}" />
+                <CheckBox Grid.Column="1"
+                    VerticalAlignment="Center"
+                    IsChecked="{Binding IsAutoPlayNext, Mode=TwoWay}"
+                    Margin="10,0"/>
+            </Grid>
+        </DataTemplate>
     </Window.Resources>
+
     
     <!-- Meine Form -->
     <Grid Width="Auto" VerticalAlignment="Top" HorizontalAlignment="Left">
@@ -78,35 +120,6 @@
                         </Style>
                     </ListBox.ItemContainerStyle>
 
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <Grid Margin="5">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="600" />
-                                    <ColumnDefinition Width="250" />
-                                    <ColumnDefinition Width="50" />
-                                </Grid.ColumnDefinitions>
-
-                                <!-- Titel -->
-                                <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{Binding DisplayName}" />
-
-                                <!-- Abspiel-Position -->
-                                <Slider Minimum="0"
-                                    Grid.Column="1"
-                                    Maximum="{Binding Duration}"
-                                    Value="{Binding CurrentPosition, Mode=TwoWay}"
-                                    SmallChange="1"
-                                    LargeChange="5"
-                                    TickFrequency="1"
-                                    IsSnapToTickEnabled="True"
-                                    VerticalAlignment="Center" />
-
-                                <!-- Checkbox für AutoPlay -->
-                                <CheckBox Grid.Column="2" VerticalAlignment="Center"
-                                    IsChecked="{Binding IsAutoPlayNext, Mode=TwoWay}" Margin="10,0"/>
-                            </Grid>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
                 </ListBox>
 
                 <StackPanel Margin="10" Width="Auto" Height="400" VerticalAlignment="Center">

@@ -431,9 +431,15 @@ namespace MySoundPlayer
             sf.FadeOutAndStop(); // Fadet den Sound aus und stoppt ihn
         }
 
+        /// <summary>
+        /// Event-Handler für den Klick auf den "Add Command" Button
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void AddCommand_Click(object sender, RoutedEventArgs e)
         {
             Cues.Add(new Command("Play", Cues.ElementAt(0), 0)); // Fügt einen neuen Command hinzu, der die erste Sounddatei abspielt
+            SoundListBox.Items.Refresh(); // damit neue Elemente sofort sichtbar werden
         }
     }
 }
