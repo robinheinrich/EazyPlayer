@@ -133,6 +133,7 @@
 
             <StackPanel Margin="10" Orientation="Horizontal" HorizontalAlignment="Stretch" Width="Auto">
                 <Button Content="Add Sound" Width="100" Height="60" Click="AddSoundButton_Click" VerticalAlignment="Center"/>
+                <Button Content="Add Command" Width="100" Height="60" Click="AddCommand_Click"/>
                 <Grid Margin="10" VerticalAlignment="Center" Width="Auto">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>

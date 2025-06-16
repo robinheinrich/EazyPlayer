@@ -119,6 +119,7 @@ namespace MySoundPlayer
             sf.SetVolume((float)(VolumeSlider.Value / 100) * (float)(TrackVolume.Value / 100));
             sf.Play(); // Abspielen der Sounddatei
         }
+
         /// <summary>
         /// Event-Handler für den Klick auf den "Play Sound" Button
         /// </summary>
@@ -135,19 +136,33 @@ namespace MySoundPlayer
                 }
                 sf.SetVolume((float)(VolumeSlider.Value / 100) * (float)(TrackVolume.Value / 100));
                 sf.Play(); // Optional: abspielen
-                int SelectedSoundfileIndex = SoundListBox.SelectedIndex; // Index der ausgewählten Sounddatei
+                int SelectedCueIndex = SoundListBox.SelectedIndex; // Index der ausgewählten Sounddatei
 
-                if (SelectedSoundfileIndex >= 0 && SelectedSoundfileIndex < SoundListBox.Items.Count -1)
+                if (SelectedCueIndex >= 0 && SelectedCueIndex < SoundListBox.Items.Count -1)
                 {
                     SoundListBox.SelectedIndex++; // Setzt den Fokus auf die nächste Sounddatei in der Liste
                 } else
                 {
                     SoundListBox.SelectedIndex = -1; // Wenn am Ende der Liste, zurück zum Anfang
                 }
+            } 
+            
+            else if (SoundListBox.SelectedItem is Command cmd)
+            {
+                cmd.Play(); // Abspielen des Commands
+                int SelectedCueIndex = SoundListBox.SelectedIndex; // Index des ausgewählten Commands
+                if (SelectedCueIndex >= 0 && SelectedCueIndex < SoundListBox.Items.Count - 1)
+                {
+                    SoundListBox.SelectedIndex++; // Setzt den Fokus auf das nächste Command in der Liste
+                }
+                else
+                {
+                    SoundListBox.SelectedIndex = -1; // Wenn am Ende der Liste, zurück zum Anfang
+                }
             }
             else
             {
-                MessageBox.Show("Bitte eine Sounddatei aus der Liste auswählen.");
+                Console.WriteLine("Kein Cue ausgewählt."); // Debug-Ausgabe
             }
         }
 
@@ -158,7 +173,9 @@ namespace MySoundPlayer
         /// <param name="e"></param>
         private void StopAllSoundsButton_Click(object sender, RoutedEventArgs e)
         {
-            foreach (Soundfile sf in Cues)
+            //Wir wollen alle Sounds stoppen, also erstmal filtern und dann stoppen.
+            var soundfiles = Cues.OfType<Soundfile>().ToList();
+            foreach (Soundfile sf in soundfiles)
             {
                 if (sf.IsPlaying)
                 {
@@ -262,13 +279,19 @@ namespace MySoundPlayer
             {
                 return; // Keine Sounddatei ausgewählt in der liste
             }
-            Soundfile sf = SoundListBox.SelectedItem as Soundfile; // Ausgewählte Sounddatei
-            cmbAudioDevices.SelectedIndex = sf.UsedAudiodevice; // Zeigt das ausgewählte Audiogerät der Sounddatei an
-            TrackVolume.Value = sf.TrackVolume * 100; // Setzt die Lautstärke der Sounddatei auf den Track Volume Slider
-            TrackStart.Maximum = (int)sf.Duration; // Setzt das Maximum des Startzeitpunkt-Sliders auf die Dauer der Datei
-            TrackStart.Value = 0; // Setzt den Startzeitpunkt auf 0
-            TrackEnd.Maximum = (int)sf.Duration; // Setzt das Maximum des Endzeitpunkt-Sliders auf die Dauer der Datei
-            TrackEnd.Value = sf.Duration; // Setzt den Endzeitpunkt auf Ende der Datei
+            if (SoundListBox.SelectedItem is Soundfile sf) { 
+                sf = SoundListBox.SelectedItem as Soundfile; // Ausgewählte Sounddatei
+                cmbAudioDevices.SelectedIndex = sf.UsedAudiodevice; // Zeigt das ausgewählte Audiogerät der Sounddatei an
+                TrackVolume.Value = sf.TrackVolume * 100; // Setzt die Lautstärke der Sounddatei auf den Track Volume Slider
+                TrackStart.Maximum = (int)sf.Duration; // Setzt das Maximum des Startzeitpunkt-Sliders auf die Dauer der Datei
+                TrackStart.Value = 0; // Setzt den Startzeitpunkt auf 0
+                TrackEnd.Maximum = (int)sf.Duration; // Setzt das Maximum des Endzeitpunkt-Sliders auf die Dauer der Datei
+                TrackEnd.Value = sf.Duration; // Setzt den Endzeitpunkt auf Ende der Datei
+            }
+            if ( SoundListBox.SelectedItem is Command cmd)
+            {
+                //Todo: combobox für TargetCue und Command für die Konfiguration des CommandCues
+            }
         }
 
         /// <summary>
@@ -393,6 +416,11 @@ namespace MySoundPlayer
             sf.SetEnd(TimeSpan.FromSeconds((double)TrackEnd.Value)); // Setzt den Endzeitpunkt der Sounddatei
         }
 
+        /// <summary>
+        /// Event-Handler für den Klick auf den "Fade and Stop" Button
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void FadeAndStopButton_Click(object sender, RoutedEventArgs e)
         {
             if (SoundListBox.SelectedItem == null)
@@ -401,6 +429,11 @@ namespace MySoundPlayer
             }
             Soundfile sf = SoundListBox.SelectedItem as Soundfile; // Ausgewählte Sounddatei
             sf.FadeOutAndStop(); // Fadet den Sound aus und stoppt ihn
+        }
+
+        private void AddCommand_Click(object sender, RoutedEventArgs e)
+        {
+            Cues.Add(new Command("Play", Cues.ElementAt(0), 0)); // Fügt einen neuen Command hinzu, der die erste Sounddatei abspielt
         }
     }
 }

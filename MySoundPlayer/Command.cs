@@ -38,7 +38,7 @@ namespace MySoundPlayer
         {
             if (TargetCue != null && CommandType != null)
             {
-            return $"{CommandType} {TargetCue?.ToString()}";                
+            return $"{CommandType} ==> {TargetCue?.ToString()}";
             }
             return "Not set yet";
         }
