@@ -17,7 +17,7 @@ namespace MySoundPlayer
     public partial class MainWindow : Window
     {
 
-        private ObservableCollection<Soundfile> Soundfiles = new ObservableCollection<Soundfile>(); // Liste für Sounddateien
+        private ObservableCollection<Cue> Cues = new ObservableCollection<Cue>(); // Liste für Sounddateien
         private List<string> AudioDevices; // Liste für Audioausgabegeräte
         private DispatcherTimer playbackTimer;
         DispatcherTimer sliderTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(250) };
@@ -28,11 +28,12 @@ namespace MySoundPlayer
             InitializeComponent();
 
             //Startwerte für das Programm
-            Soundfiles.Add(new Soundfile("")); // Null Referenz für die Sounddatei initialisieren
-            SoundListBox.ItemsSource = Soundfiles;
-            AudioDevices = Soundfiles.ElementAt(0).GetAudioDevices(); // Audioausgabegeräte abrufen
+            Cues.Add(new Soundfile("")); // Null Referenz für die Sounddatei initialisieren
+            SoundListBox.ItemsSource = Cues;
+            var sf = Cues.ElementAt(0) as Soundfile; // Erstes Element in der Liste als Soundfile initialisieren
+            AudioDevices = sf.GetAudioDevices(); // Audioausgabegeräte abrufen
             PopulateAudioDevices();
-            Soundfiles.Clear(); // Leere Liste initialisieren, damit die ComboBox nicht leer ist
+            Cues.Clear(); // Leere Liste initialisieren, damit die ComboBox nicht leer ist
             
             StartSliderUpdateTimer();
 
@@ -94,13 +95,15 @@ namespace MySoundPlayer
         {
             sliderTimer.Tick += delegate (object sender, EventArgs e)
             {
-                foreach (var sf in Soundfiles)
+                foreach (var Cue in Cues)
                 {
-                    if (sf.IsPlaying)
+                    if (Cue is Soundfile sf)
                     {
-                        sf.CurrentPosition = sf.AudioFileCurrentTime;
+                        if (sf.IsPlaying)
+                        {
+                            sf.CurrentPosition = sf.AudioFileCurrentTime;
+                        }
                     }
-                        
                 }
             };
             sliderTimer.Start();
@@ -155,7 +158,7 @@ namespace MySoundPlayer
         /// <param name="e"></param>
         private void StopAllSoundsButton_Click(object sender, RoutedEventArgs e)
         {
-            foreach (Soundfile sf in Soundfiles)
+            foreach (Soundfile sf in Cues)
             {
                 if (sf.IsPlaying)
                 {
@@ -186,7 +189,7 @@ namespace MySoundPlayer
                 {
                     sf = new Soundfile(selectedFile);
                     sf.PlaybackFinished += Soundfile_PlaybackFinished;
-                    Soundfiles.Add(sf);
+                    Cues.Add(sf);
                 }
                 SoundListBox.Items.Refresh(); // damit neue Elemente sofort sichtbar werden
                 SoundListBox.SelectedIndex = SoundListBox.Items.Count - 1; // Setzt den Fokus auf das letzte Element in der Liste
@@ -213,7 +216,7 @@ namespace MySoundPlayer
                 VolumeLabel.Content = $"{(int)VolumeSlider.Value} %";
             float MasterVolume = (float)(VolumeSlider.Value / 100);
 
-            foreach (Soundfile sf in Soundfiles)
+            foreach (Soundfile sf in Cues)
             {
                 sf.SetVolume(sf.TrackVolume * MasterVolume); // Setzt die Lautstärke der Sounddatei
             }
@@ -224,10 +227,13 @@ namespace MySoundPlayer
         /// </summary>
         private void PopulateAudioDevices()
         {
-            AudioDevices = Soundfiles.ElementAt(0).GetAudioDevices(); // Audioausgabegeräte abrufen
-            cmbAudioDevices.ItemsSource = AudioDevices; // ComboBox mit den Geräten füllen
-            if (AudioDevices.Count > 0)
-                cmbAudioDevices.SelectedIndex = 0; // Erstes Gerät auswählen
+            var Cue = Cues.ElementAt(0); // Erstes Element in der Liste als Soundfile initialisieren
+            if (Cue is Soundfile sf) { 
+                AudioDevices = sf.GetAudioDevices(); // Audioausgabegeräte abrufen
+                cmbAudioDevices.ItemsSource = AudioDevices; // ComboBox mit den Geräten füllen
+                if (AudioDevices.Count > 0)
+                    cmbAudioDevices.SelectedIndex = 0; // Erstes Gerät auswählen
+            }
         }
 
         /// <summary>
@@ -293,7 +299,7 @@ namespace MySoundPlayer
             sliderTimer.Stop();
             playbackTimer?.Stop();
             // Alle Sounddateien stoppen und Ressourcen freigeben
-            foreach (Soundfile sf in Soundfiles)
+            foreach (Soundfile sf in Cues)
             {
                 sf.Stop();
                 sf.Dispose(); // Ressourcen freigeben
@@ -344,8 +350,8 @@ namespace MySoundPlayer
                 var currentFile = sender as Soundfile;
                 if (currentFile != null && currentFile.IsAutoPlayNext)
                 {
-                    var currentIndex = Soundfiles.IndexOf(currentFile);
-                    if (currentIndex + 1 < Soundfiles.Count)
+                    var currentIndex = Cues.IndexOf(currentFile);
+                    if (currentIndex + 1 < Cues.Count)
                     {
                         SoundListBox.SelectedIndex = currentIndex + 1;
                         (SoundListBox.SelectedItem as Soundfile)?.Play();

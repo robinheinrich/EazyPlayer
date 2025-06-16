@@ -8,7 +8,7 @@ using NAudio.Wave.SampleProviders;
 
 namespace MySoundPlayer.Audio
 {
-    public class Soundfile : IDisposable, INotifyPropertyChanged
+    public class Soundfile : Cue, IDisposable, INotifyPropertyChanged
     {
         public event EventHandler PlaybackFinished;
         public event PropertyChangedEventHandler PropertyChanged;
@@ -177,14 +177,14 @@ namespace MySoundPlayer.Audio
             }
         }
 
-        public void Play()
+        public override void Play()
         {
             Console.WriteLine($"Gebe {ToString()} wieder.");
             outputDevice?.Play();
             IsPlaying = true;
         }
 
-        public void Stop()
+        public override void  Stop()
         {
             outputDevice?.Stop();
             IsPlaying = false;
