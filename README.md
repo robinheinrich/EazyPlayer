@@ -1,16 +1,16 @@
-# MySoundPlayer
+# EazyPlayer
 
-MySoundPlayer ist eine Windows-Anwendung zum komfortablen Abspielen, Verwalten und Steuern von Audiodateien (z. B. für Theater, Events oder Podcasts).  
+EazyPlayer ist eine Windows-Anwendung zum komfortablen Abspielen, Verwalten und Steuern von Audiodateien (z. B. für Theater, Events oder Podcasts).  
 Die Software bietet eine übersichtliche Oberfläche, Drag & Drop-Unterstützung und flexible Steuerungsmöglichkeiten.
 
 ## Hauptfunktionen
 
 - **Sounddateien verwalten:**  
-  Füge beliebig viele Audiodateien (`.wav`, `.mp3`, `.mp4`) zur Liste hinzu.  
+  Füge beliebig viele Audiodateien (`.wav`, `.mp3`, `.mp4` (ohne Video)) zur Liste hinzu.  
   Die Reihenfolge kann per Drag & Drop geändert werden.
 
 - **Abspielen & Stoppen:**  
-  Spiele einzelne Tracks oder alle Sounds ab.  
+  Spiele einzelne Tracks oder alle Sounds ab.
   Stoppe alle laufenden Sounds mit einem Klick.
 
 - **Lautstärkeregelung:**  
@@ -19,48 +19,33 @@ Die Software bietet eine übersichtliche Oberfläche, Drag & Drop-Unterstützung
 - **Start- und Endzeitpunkt setzen:**  
   Lege für jeden Track einen individuellen Start- und Endzeitpunkt fest.
 
-- **Fade-Out:**  
-  Lasse einen Track sanft ausblenden und stoppen.
+- **Fade-Out-And-Stop:**  
+  Lasse einen selektierten Track sanft ausblenden und stoppen.
 
 - **Auto-Play-Next:**  
-  Aktiviere, dass nach dem Ende eines Tracks automatisch der nächste abgespielt wird.
+  Aktiviere, dass nach dem Ende eines Cues automatisch der nächste abgespielt wird.
 
 - **Audiogerät wählen:**  
-  Wähle für jeden Track das gewünschte Ausgabegerät (z. B. verschiedene Soundkarten).
+  Wähle für jeden Track das gewünschte Ausgabegerät (verschiedene Soundkarten).
 
 - **Kommandos:**  
-  Füge spezielle Kommandos hinzu, um z. B. andere Tracks automatisch zu starten oder zu stoppen.
+  Füge Kommando-Cues hinzu, um z. B. andere Tracks automatisch zu starten oder zu stoppen.
 
 - **Tastatursteuerung:**  
   - Leertaste: Aktuellen Track abspielen  
-  - Escape: Alle Sounds stoppen  
+  - Escape: Alle Sounds sofort stoppen ohne Fade  
   - L: Neue Sounddatei hinzufügen
 
 - **Drag & Drop:**  
   - Ziehe Dateien aus dem Explorer direkt in die Liste, um sie hinzuzufügen.  
-  - Sortiere die Liste per Ziehen und Ablegen.
-
-## Bedienung
-
-1. **Sounddateien hinzufügen:**  
-   Klicke auf „Add Sound“ oder ziehe Dateien in die Liste.
-
-2. **Track auswählen:**  
-   Wähle einen Track aus, um Einstellungen wie Lautstärke, Start/Ende oder Ausgabegerät zu ändern.
-
-3. **Abspielen/Stoppen:**  
-   Nutze die Buttons oder die Tastaturkürzel.
-
-4. **Kommandos nutzen:**  
-   Füge Kommandos hinzu, um komplexe Abläufe zu automatisieren.
+  - Sortiere die Liste per Drag & Drop.
 
 ## Hinweise
 
-- Unterstützte Dateiformate: `.wav`, `.mp3`, `.mp4`
+- Unterstützte Dateiformate: `.wav`, `.mp3`, `.mp4` (Letzteres nur ohne Videoinhalt!)
 - Die Reihenfolge der Tracks kann jederzeit geändert werden.
-- Einstellungen werden beim Schließen noch nicht gespeichert.
+- Einstellungen werden beim Schließen noch nicht gespeichert. Kommt sehr bald.
 
 ---
 
-**Stand:** Juni 2025  
-**Entwickelt mit:** .NET Framework 4.7.2, C# 7.3, WPF
+**Stand:** Juni 2025
