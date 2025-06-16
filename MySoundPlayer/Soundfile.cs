@@ -146,6 +146,7 @@ namespace MySoundPlayer.Audio
             }
 
             Stop(); // Danach vollständig stoppen
+            volumeProvider.Volume = initialVolume; // Volume zurücksetzen für nächste Nutzung
         }
 
 

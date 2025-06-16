@@ -62,6 +62,7 @@
     
     <!-- Meine Form -->
     <Grid Width="Auto" VerticalAlignment="Top" HorizontalAlignment="Left">
+        <!-- Header -->
         <StackPanel Margin="10" Width="Auto">
             <StackPanel Margin="10" Orientation="Horizontal">
                 <Label Content="My Sound Player" Style="{StaticResource MyHeaderStyle}" Height="Auto" Width="675" Margin="0,0,0,0" VerticalAlignment="Center"/>
@@ -76,8 +77,9 @@
                 <Button x:Name="StopAllButton" Content="Stop All" Background="Red" Margin="25 0 0 0" Width="100" Height="60" Click="StopAllSoundsButton_Click" VerticalAlignment="Center"/>
             </StackPanel>
 
+            <!-- Middle Section -->
             <StackPanel Margin="10" Width="Auto" Orientation="Horizontal">
-
+                <!-- Middle Left Section -->
                 <ListBox x:Name="SoundListBox" Width="900"  AlternationCount="2" ItemsSource="{Binding}" SelectionMode="Single" SelectionChanged="SoundListBox_SelectionChanged">
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="ListBoxItem">
@@ -121,29 +123,48 @@
                     </ListBox.ItemContainerStyle>
 
                 </ListBox>
-
-                <StackPanel Margin="10" Width="Auto" Height="400" VerticalAlignment="Center">
-                    <Label Content="Edit Sound" FontWeight="Bold" HorizontalAlignment="Center"/>
-                    <Label Content="Output Device" HorizontalAlignment="Left" />
-                    <ComboBox x:Name="cmbAudioDevices" Width="250" ItemTemplate="{StaticResource ComboBoxItemTemplate}" SelectionChanged="ComboBox_SelectionChanged" />
-                        <Label Content="Track Volume:" VerticalAlignment="Center" />
-                    <Grid>
-                        <Slider x:Name="TrackVolume" Width="180" Minimum="0" Maximum="100" Value="90" TickFrequency="1" IsSnapToTickEnabled="True" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1" ValueChanged="TrackVolumeSlider_ValueChanged" SmallChange="2"/>
-                        <Label x:Name="TrackVolumeLabel" VerticalAlignment="Center" HorizontalAlignment="Right" Grid.Column="2" />
-                    </Grid>
-                    <Label Content="Track Start:" VerticalAlignment="Center" />
-                    <Grid>
-                        <Slider x:Name="TrackStart" Width="180" Minimum="0" Maximum="100" Value="90" TickFrequency="1" IsSnapToTickEnabled="True" HorizontalAlignment="Left" VerticalAlignment="Bottom" ValueChanged="TrackStartSlider_ValueChanged" SmallChange="2"/>
-                        <Label x:Name="TrackStartLabel" VerticalAlignment="Center" HorizontalAlignment="Right" Grid.Column="2" />
-                    </Grid>
-                    <Label Content="Track End:" VerticalAlignment="Center" />
-                    <Grid>
-                        <Slider x:Name="TrackEnd" Width="180" Minimum="0" Maximum="100" Value="90" TickFrequency="1" IsSnapToTickEnabled="True" HorizontalAlignment="Left" VerticalAlignment="Top" ValueChanged="TrackEndSlider_ValueChanged" SmallChange="2"/>
-                        <Label x:Name="TrackEndLabel" VerticalAlignment="Center" HorizontalAlignment="Right" Grid.Column="2" />
-                    </Grid>
-                </StackPanel>
+                <!-- Middle Right Section -->
+                <TabControl x:Name="SideTabControl" SelectedIndex="1" Background="{StaticResource BackgroundColorStandard}" Foreground="{StaticResource TextColorStandard}">
+                    <TabItem x:Name="SoundfileTab" Header="Soundfiles">
+                        <StackPanel Margin="10" Width="Auto" Height="400" VerticalAlignment="Center">
+                            <Label Content="Edit Sound" FontWeight="Bold" HorizontalAlignment="Center"/>
+                            <Label Content="Output Device" HorizontalAlignment="Left" />
+                            <ComboBox x:Name="cmbAudioDevices" Width="250" ItemTemplate="{StaticResource ComboBoxItemTemplate}" SelectionChanged="ComboBox_SelectionChanged" />
+                            <Label Content="Track Volume:" VerticalAlignment="Center" />
+                            <Grid>
+                                <Slider x:Name="TrackVolume" Width="180" Minimum="0" Maximum="100" Value="90" TickFrequency="1" IsSnapToTickEnabled="True" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1" ValueChanged="TrackVolumeSlider_ValueChanged" SmallChange="2"/>
+                                <Label x:Name="TrackVolumeLabel" VerticalAlignment="Center" HorizontalAlignment="Right" Grid.Column="2" />
+                            </Grid>
+                            <Label Content="Track Start:" VerticalAlignment="Center" />
+                            <Grid>
+                                <Slider x:Name="TrackStart" Width="180" Minimum="0" Maximum="100" Value="90" TickFrequency="1" IsSnapToTickEnabled="True" HorizontalAlignment="Left" VerticalAlignment="Bottom" ValueChanged="TrackStartSlider_ValueChanged" SmallChange="2"/>
+                                <Label x:Name="TrackStartLabel" VerticalAlignment="Center" HorizontalAlignment="Right" Grid.Column="2" />
+                            </Grid>
+                            <Label Content="Track End:" VerticalAlignment="Center" />
+                            <Grid>
+                                <Slider x:Name="TrackEnd" Width="180" Minimum="0" Maximum="100" Value="90" TickFrequency="1" IsSnapToTickEnabled="True" HorizontalAlignment="Left" VerticalAlignment="Top" ValueChanged="TrackEndSlider_ValueChanged" SmallChange="2"/>
+                                <Label x:Name="TrackEndLabel" VerticalAlignment="Center" HorizontalAlignment="Right" Grid.Column="2" />
+                            </Grid>
+                        </StackPanel>
+                    </TabItem>
+                    <TabItem x:Name="CommandTab" Header="Commands">
+                        <StackPanel Margin="10" Width="Auto" Height="400" VerticalAlignment="Center">
+                            <Label Content="Edit Command" FontWeight="Bold" HorizontalAlignment="Center"/>
+                            <Label Content="Command Type" HorizontalAlignment="Left" />
+                            <ComboBox x:Name="cmbCommand" Width="250" ItemTemplate="{StaticResource ComboBoxItemTemplate}" SelectionChanged="ComboboxCommand_SelectionChanged" />
+                            <Label Content="Target Cue" HorizontalAlignment="Left" />
+                            <ComboBox x:Name="cmbTargetCue" Width="250" ItemTemplate="{StaticResource ComboBoxItemTemplate}" SelectionChanged="ComboboxTargetCue_SelectionChanged" />
+                            <Label Content="Fade Duration:" VerticalAlignment="Center" />
+                            <Grid>
+                                <Slider x:Name="FadeDurationSlider" Width="180" Minimum="0" Maximum="6000" Value="2" TickFrequency="1" IsSnapToTickEnabled="True" HorizontalAlignment="Left" VerticalAlignment="Top" ValueChanged="FadeDurationSlider_ValueChanged" SmallChange="2"/>
+                                <Label x:Name="FadeDurationLabel" Content="Sek" VerticalAlignment="Center" HorizontalAlignment="Right" Grid.Column="2" />
+                            </Grid>
+                        </StackPanel>
+                    </TabItem>
+                </TabControl>
             </StackPanel>
-
+            
+            <!-- Bottom Section -->
             <StackPanel Margin="10" Orientation="Horizontal" HorizontalAlignment="Stretch" Width="Auto">
                 <Button Content="Add Sound" Width="100" Height="60" Click="AddSoundButton_Click" VerticalAlignment="Center"/>
                 <Button Content="Add Command" Width="100" Height="60" Click="AddCommand_Click"/>

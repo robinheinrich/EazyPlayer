@@ -232,8 +232,8 @@ namespace MySoundPlayer
             if (VolumeLabel != null && IsLoaded)
                 VolumeLabel.Content = $"{(int)VolumeSlider.Value} %";
             float MasterVolume = (float)(VolumeSlider.Value / 100);
-
-            foreach (Soundfile sf in Cues)
+            var soundfiles = Cues.OfType<Soundfile>().ToList();
+            foreach (Soundfile sf in soundfiles)
             {
                 sf.SetVolume(sf.TrackVolume * MasterVolume); // Setzt die Lautstärke der Sounddatei
             }
@@ -277,9 +277,13 @@ namespace MySoundPlayer
         {
             if (SoundListBox.SelectedItem == null)
             {
+                SoundfileTab.IsEnabled = false; // Deaktiviert den Soundfile Tab, wenn keine Sounddatei ausgewählt ist
                 return; // Keine Sounddatei ausgewählt in der liste
             }
-            if (SoundListBox.SelectedItem is Soundfile sf) { 
+            if (SoundListBox.SelectedItem is Soundfile sf) {
+                SoundfileTab.IsEnabled = true; // Aktiviert den Soundfile Tab
+                SideTabControl.SelectedItem = SoundfileTab; // Wechselt zum Tab "Soundfile"
+                FadeAndStopButton.IsEnabled = true; // Aktiviert den Fade and Stop Button
                 sf = SoundListBox.SelectedItem as Soundfile; // Ausgewählte Sounddatei
                 cmbAudioDevices.SelectedIndex = sf.UsedAudiodevice; // Zeigt das ausgewählte Audiogerät der Sounddatei an
                 TrackVolume.Value = sf.TrackVolume * 100; // Setzt die Lautstärke der Sounddatei auf den Track Volume Slider
@@ -287,11 +291,45 @@ namespace MySoundPlayer
                 TrackStart.Value = 0; // Setzt den Startzeitpunkt auf 0
                 TrackEnd.Maximum = (int)sf.Duration; // Setzt das Maximum des Endzeitpunkt-Sliders auf die Dauer der Datei
                 TrackEnd.Value = sf.Duration; // Setzt den Endzeitpunkt auf Ende der Datei
+                SoundListBox.Items.Refresh(); // damit neue Elemente sofort sichtbar werden
             }
             if ( SoundListBox.SelectedItem is Command cmd)
             {
-                //Todo: combobox für TargetCue und Command für die Konfiguration des CommandCues
+                var soundfiles = Cues.OfType<Soundfile>().ToList();
+                cmbTargetCue.ItemsSource = soundfiles; // Füllt die ComboBox mit den verfügbaren Sounddateien
+                cmbTargetCue.SelectedIndex = soundfiles.IndexOf(cmd.TargetCue as Soundfile); // Setzt den Wert auf die aktuelle TargetCue des Commands
+                cmbCommand.ItemsSource = Command.CommandList; // Füllt die ComboBox mit den verfügbaren Commands
+                cmbCommand.SelectedIndex = Command.CommandList.IndexOf(cmd.CommandType); // Setzt den Wert auf den aktuellen Command-Typ des Commands
+                SoundfileTab.IsEnabled = true; // Aktiviert den Soundfile Tab
+                SideTabControl.SelectedItem = CommandTab; // Wechselt zum Tab "Command"
+                FadeAndStopButton.IsEnabled = false; // Deaktiviert den Fade and Stop Button, da Commands keine Lautstärke haben
+                SoundListBox.Items.Refresh(); // damit neue Elemente sofort sichtbar werden
             }
+        }
+
+
+        private void ComboboxCommand_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (SoundListBox.SelectedItem == null || !(SoundListBox.SelectedItem is Command cmd))
+            {
+                return; // Keine Command ausgewählt in der Liste
+            }
+            var comboBox = sender as ComboBox;
+            if (comboBox != null && comboBox.SelectedItem != null)
+            {
+                cmd.CommandType = comboBox.SelectedItem.ToString(); // Setzt den Command-Typ des Commands
+            }
+        }
+
+
+        private void FadeDurationSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (SoundListBox.SelectedItem == null || !(SoundListBox.SelectedItem is Command cmd))
+            {
+                return; // Keine Command ausgewählt in der Liste
+            }
+            cmd.Duration = (float)FadeDurationSlider.Value; // Setzt die Fade-Dauer des Commands
+            FadeDurationLabel.Content = $"{(int)FadeDurationSlider.Value} Sek"; // Aktualisiert die Anzeige der Fade-Dauer
         }
 
         /// <summary>
@@ -440,6 +478,20 @@ namespace MySoundPlayer
         {
             Cues.Add(new Command("Play", Cues.ElementAt(0), 0)); // Fügt einen neuen Command hinzu, der die erste Sounddatei abspielt
             SoundListBox.Items.Refresh(); // damit neue Elemente sofort sichtbar werden
+        }
+
+        private void ComboboxTargetCue_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+           if (SoundListBox.SelectedItem == null || !(SoundListBox.SelectedItem is Command cmd))
+            {
+                return; // Keine Command ausgewählt in der Liste
+            }
+            var comboBox = sender as ComboBox;
+            if (comboBox != null && comboBox.SelectedItem != null)
+            {
+                // Setzt das TargetCue des Commands auf die ausgewählte Sounddatei
+                cmd.TargetCue = comboBox.SelectedItem as Cue;
+            }
         }
     }
 }
