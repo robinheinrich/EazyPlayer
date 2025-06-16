@@ -5,10 +5,11 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
+using MySoundPlayer; // Add this if not already present
 
 namespace MySoundPlayer.Audio
 {
-    public class Soundfile : IDisposable, INotifyPropertyChanged
+    public class Soundfile : Cue, IDisposable, INotifyPropertyChanged
     {
         public event EventHandler PlaybackFinished;
         public event PropertyChangedEventHandler PropertyChanged;
@@ -63,11 +64,13 @@ namespace MySoundPlayer.Audio
         }
 
         public Soundfile(string filePath)
+            : base(System.IO.Path.GetFileNameWithoutExtension(filePath)) // Call Cue base constructor with name
         {
             Load(filePath);
         }
 
         public Soundfile(string filePath, TimeSpan? start = null, TimeSpan? end = null)
+            : base(System.IO.Path.GetFileNameWithoutExtension(filePath)) // Call Cue base constructor with name
         {
             Load(filePath, start, end);
         }
