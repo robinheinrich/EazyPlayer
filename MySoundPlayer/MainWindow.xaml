@@ -7,7 +7,7 @@
         xmlns:Properties="clr-namespace:MySoundPlayer.Properties" x:Class="MySoundPlayer.MainWindow"
         mc:Ignorable="d"
         Title="MainWindow" Height="700" Width="1300"
-        Background="Black">
+        Background="Black" ResizeMode="CanMinimize">
     
     <!-- Lokale Styles -->
     <Window.Resources>
@@ -24,6 +24,13 @@
             <StackPanel Margin="10" Orientation="Horizontal">
                 <Label Content="My Sound Player" Style="{StaticResource MyHeaderStyle}" Height="Auto" Width="675" Margin="0,0,0,0" VerticalAlignment="Center"/>
                 <Button x:Name="OKButton" Content="Go" Background="Green" Width="80" Height="60" Click="PlaySoundButton_Click" VerticalAlignment="Center"/>
+                <Button x:Name="FadeAndStopButton" Background="Red" Margin="25 0 0 0" Width="100" Height="60" Click="FadeAndStopButton_Click" VerticalAlignment="Center">
+                    <TextBlock TextAlignment="Center">
+                        Fade and
+                        <LineBreak/>
+                        Stop Selected
+                    </TextBlock>
+                </Button>
                 <Button x:Name="StopAllButton" Content="Stop All" Background="Red" Margin="25 0 0 0" Width="100" Height="60" Click="StopAllSoundsButton_Click" VerticalAlignment="Center"/>
             </StackPanel>
 

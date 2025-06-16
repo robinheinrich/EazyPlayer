@@ -387,8 +387,14 @@ namespace MySoundPlayer
             sf.SetEnd(TimeSpan.FromSeconds((double)TrackEnd.Value)); // Setzt den Endzeitpunkt der Sounddatei
         }
 
-
+        private void FadeAndStopButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (SoundListBox.SelectedItem == null)
+            {
+                return; // Keine Sounddatei ausgewählt in der Liste
+            }
+            Soundfile sf = SoundListBox.SelectedItem as Soundfile; // Ausgewählte Sounddatei
+            sf.FadeOutAndStop(); // Fadet den Sound aus und stoppt ihn
+        }
     }
-
-
 }
