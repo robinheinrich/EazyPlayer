@@ -121,9 +121,22 @@ namespace MySoundPlayer
         /// <param name="Index"></param>
         public void StartTrack(int Index)
         {
-            Soundfile sf = SoundListBox.Items.GetItemAt(Index) as Soundfile; // Nächste Sounddatei in der Liste abspielen (nicht selektierte Sounddatei)
-            sf.SetVolume((float)(VolumeSlider.Value / 100) * (float)(TrackVolume.Value / 100));
-            sf.Play(); // Abspielen der Sounddatei
+            var cue = SoundListBox.Items.GetItemAt(Index); // Nächste Sounddatei in der Liste abspielen (nicht selektierte Sounddatei)
+            if (cue.GetType() == typeof(Soundfile))
+            {
+                Soundfile sf = SoundListBox.Items.GetItemAt(Index) as Soundfile; // Nächste Sounddatei in der Liste abspielen (nicht selektierte Sounddatei)
+                sf.SetVolume((float)(VolumeSlider.Value / 100) * (float)(TrackVolume.Value / 100));
+                sf.Play(); // Abspielen der Sounddatei
+            }
+            else if (cue.GetType() == typeof(Command))
+            {
+                Command cmd = SoundListBox.Items.GetItemAt(Index) as Command; // Nächste Command in der Liste abspielen (nicht selektierte Command)
+                cmd.Play(); // Abspielen des Commands
+            }
+            else
+            {
+                Console.WriteLine($"Fehler in der Cueliste. Cue Typ nicht erkannt: {cue.GetType()}"); // Debug-Ausgabe
+            }
         }
 
         /// <summary>
@@ -421,7 +434,8 @@ namespace MySoundPlayer
                     if (currentIndex + 1 < Cues.Count)
                     {
                         SoundListBox.SelectedIndex = currentIndex + 1;
-                        (SoundListBox.SelectedItem as Soundfile)?.Play();
+                        //(SoundListBox.SelectedItem as Soundfile)?.Play();
+                        StartTrack(currentIndex + 1); // Startet den nächsten Track automatisch
                     }
                 }
             });
