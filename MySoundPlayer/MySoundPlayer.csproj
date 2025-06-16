@@ -85,6 +85,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Command.cs" />
     <Compile Include="Cue.cs" />
     <Compile Include="Soundfile.cs" />
     <Page Include="MainWindow.xaml">
