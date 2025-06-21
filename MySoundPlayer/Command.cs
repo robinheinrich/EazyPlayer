@@ -30,7 +30,7 @@ namespace EazsyPlayer
             CommandType = commandType;
             TargetCue = targetCue;
             Duration = duration;
-        }
+		}
 
         public override string ToString()
         {
@@ -38,12 +38,18 @@ namespace EazsyPlayer
             {
             return $"{CommandType} ==> {TargetCue?.ToString()}";
             }
-            return "Not set yet";
+            return "No target cue set";
         }
 
         public override void Play()
         {
-            switch (CommandType)
+            if (TargetCue == null || CommandType == null)
+			{
+				Console.WriteLine("TargetCue or CommandType is not set.");
+                return;
+			}
+
+			switch (CommandType)
             {
                 case "FadeOut":
                     (TargetCue as Soundfile)?.FadeOutAndStop();

@@ -50,7 +50,17 @@
                     <ColumnDefinition Width="850" />
                     <ColumnDefinition Width="50" />
                 </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{Binding}" />
+                <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{Binding}">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding TargetCue}" Value="{x:Null}">
+                                    <Setter Property="Foreground" Value="Red"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
                 <CheckBox Grid.Column="1"
                     VerticalAlignment="Center"
                     IsChecked="{Binding IsAutoPlayNext, Mode=TwoWay}"
@@ -80,9 +90,8 @@
             <!-- Middle Section -->
             <StackPanel Margin="10" Width="Auto" Orientation="Horizontal">
                 <!-- Middle Left Section -->
-                <ListBox x:Name="SoundListBox" Width="900"  AlternationCount="2" ItemsSource="{Binding}" SelectionMode="Single" SelectionChanged="SoundListBox_SelectionChanged" AllowDrop="True"/>
-
-                    <!-- Middle Right Section -->
+                <ListBox x:Name="SoundListBox" Width="900"  AlternationCount="2" ItemsSource="{Binding}" SelectionMode="Single" SelectionChanged="SoundListBox_SelectionChanged" AllowDrop="True" />
+                <!-- Middle Right Section -->
                 <TabControl x:Name="SideTabControl" SelectedIndex="1" Background="{StaticResource BackgroundColorStandard}" Foreground="{StaticResource TextColorStandard}">
                     <TabItem x:Name="SoundfileTab" Header="Soundfiles">
                         <StackPanel Margin="10" Width="Auto" Height="400" VerticalAlignment="Center">

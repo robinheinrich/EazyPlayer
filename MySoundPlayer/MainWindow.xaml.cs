@@ -23,19 +23,18 @@ namespace EazsyPlayer
         private DispatcherTimer playbackTimer;
         DispatcherTimer sliderTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(250) };
         private Point _dragStartPoint;
-
+        
         // Konstruktor der MainWindow-Klasse
         public MainWindow()
         {
             InitializeComponent();
+            
+            SoundListBox.DataContext = Cues;
 
             //Startwerte für das Programm
-            Cues.Add(new Soundfile("")); // Null Referenz für die Sounddatei initialisieren
-            SoundListBox.ItemsSource = Cues;
-            var sf = Cues.ElementAt(0) as Soundfile; // Erstes Element in der Liste als Soundfile initialisieren
+            Soundfile sf = new Soundfile("");
             AudioDevices = sf.GetAudioDevices(); // Audioausgabegeräte abrufen
-            PopulateAudioDevices();
-            Cues.Clear(); // Leere Liste initialisieren, damit die ComboBox nicht leer ist
+            PopulateAudioDevices(AudioDevices);
             
             StartSliderUpdateTimer();
 
@@ -58,6 +57,7 @@ namespace EazsyPlayer
             SoundListBox.Drop += SoundListBox_Drop;
             SoundListBox.DragOver += SoundListBox_DragOver;
         }
+
         //Router für Tastendrücke
         public static readonly RoutedUICommand PlayCommand = new RoutedUICommand("PlayCommand", "PlayCommand", typeof(MainWindow));
 
@@ -227,7 +227,7 @@ namespace EazsyPlayer
                     sf.PlaybackFinished += Soundfile_PlaybackFinished;
                     Cues.Add(sf);
                 }
-                SoundListBox.Items.Refresh(); // damit neue Elemente sofort sichtbar werden
+                SoundListBox_RefreshListContent(); // Aktualisiert die ListBox, um neue Cues anzuzeigen
                 SoundListBox.SelectedIndex = SoundListBox.Items.Count - 1; // Setzt den Fokus auf das letzte Element in der Liste
                 
                 sf = SoundListBox.SelectedItem as Soundfile; // Ausgewählte Sounddatei
@@ -239,6 +239,32 @@ namespace EazsyPlayer
                     TrackEnd.Value = sf.Duration; // Setzt den Endzeitpunkt auf Ende der Datei
                 }
             }
+        }
+
+        /// <summary>
+        /// Event-Handler für den Klick auf den "Add Command" Button
+        /// </summary>
+        /// <param="sender"></param>
+        /// <param="e"></param>
+        private void AddCommand_Click(object sender, RoutedEventArgs e)
+        {
+            Cue CurrentCue = null;
+            //Wenn die Liste nicht leer ist und ein Cue ausgewählt ist, wird der aktuell ausgewählte Cue in der Liste gesetzt
+            if (Cues.Count() > 0 && SoundListBox.SelectedIndex != -1)
+            {
+                CurrentCue = Cues.ElementAt(SoundListBox.SelectedIndex); // Aktuell ausgewählter Cue in der Liste
+            }
+
+            // Wenn die Liste nicht leer ist aber kein Cue ausgewählt ist, wird der neue Cue am Ende der Liste hinzugefügt und das Target auf null gesetzt
+            if (CurrentCue == null)
+            {
+                Cues.Add(new Command("Play", null, 0)); // Fügt ein neues Command am Ende der Liste hinzu
+            }
+            else
+            {
+                Cues.Insert(SoundListBox.SelectedIndex + 1, new Command("Play", CurrentCue, 0)); // Fügt ein neues Command direkt nach dem aktuell ausgewählten Element ein und setzt dieses als Target
+            }
+            SoundListBox_RefreshListContent(); // Aktualisiert die ListBox, um neue Cues anzuzeigen
         }
 
         /// <summary>
@@ -261,15 +287,11 @@ namespace EazsyPlayer
         /// <summary>
         /// Füllt die ComboBox mit den verfügbaren Audioausgabegeräten
         /// </summary>
-        private void PopulateAudioDevices()
+        private void PopulateAudioDevices(List<string> Audiodevices)
         {
-            var Cue = Cues.ElementAt(0); // Erstes Element in der Liste als Soundfile initialisieren
-            if (Cue is Soundfile sf) { 
-                AudioDevices = sf.GetAudioDevices(); // Audioausgabegeräte abrufen
                 cmbAudioDevices.ItemsSource = AudioDevices; // ComboBox mit den Geräten füllen
                 if (AudioDevices.Count > 0)
                     cmbAudioDevices.SelectedIndex = 0; // Erstes Gerät auswählen
-            }
         }
 
         /// <summary>
@@ -285,6 +307,7 @@ namespace EazsyPlayer
             }
             Soundfile sf = SoundListBox.SelectedItem as Soundfile; // Ausgewählte Sounddatei
             sf.SetOutputDevice(cmbAudioDevices.SelectedIndex); // Setzt das ausgewählte Audiogerät der Sounddatei
+            SoundListBox_RefreshListContent(); // Aktualisiert die ListBox, um neue Cues anzuzeigen
         }
 
         /// <summary>
@@ -310,7 +333,7 @@ namespace EazsyPlayer
                 TrackStart.Value = 0; // Setzt den Startzeitpunkt auf 0
                 TrackEnd.Maximum = (int)sf.Duration; // Setzt das Maximum des Endzeitpunkt-Sliders auf die Dauer der Datei
                 TrackEnd.Value = sf.Duration; // Setzt den Endzeitpunkt auf Ende der Datei
-                SoundListBox.Items.Refresh(); // damit neue Elemente sofort sichtbar werden
+                
             }
             if ( SoundListBox.SelectedItem is Command cmd)
             {
@@ -322,8 +345,9 @@ namespace EazsyPlayer
                 SoundfileTab.IsEnabled = true; // Aktiviert den Soundfile Tab
                 SideTabControl.SelectedItem = CommandTab; // Wechselt zum Tab "Command"
                 FadeAndStopButton.IsEnabled = false; // Deaktiviert den Fade and Stop Button, da Commands keine Lautstärke haben
-                SoundListBox.Items.Refresh(); // damit neue Elemente sofort sichtbar werden
+                
             }
+            SoundListBox_RefreshListContent(); // Aktualisiert die ListBox, um neue Cues anzuzeigen
         }
 
 
@@ -338,6 +362,7 @@ namespace EazsyPlayer
             {
                 cmd.CommandType = comboBox.SelectedItem.ToString(); // Setzt den Command-Typ des Commands
             }
+            SoundListBox_RefreshListContent(); // Aktualisiert die ListBox, um neue Cues anzuzeigen
         }
 
 
@@ -434,7 +459,6 @@ namespace EazsyPlayer
                     if (currentIndex + 1 < Cues.Count)
                     {
                         SoundListBox.SelectedIndex = currentIndex + 1;
-                        //(SoundListBox.SelectedItem as Soundfile)?.Play();
                         StartTrack(currentIndex + 1); // Startet den nächsten Track automatisch
                     }
                 }
@@ -489,18 +513,7 @@ namespace EazsyPlayer
             sf.FadeOutAndStop(); // Fadet den Sound aus und stoppt ihn
         }
 
-        /// <summary>
-        /// Event-Handler für den Klick auf den "Add Command" Button
-        /// </summary>
-        /// <param="sender"></param>
-        /// <param="e"></param>
-        private void AddCommand_Click(object sender, RoutedEventArgs e)
-        {
-            int CurrentSelectedIndex = SoundListBox.SelectedIndex; // Aktuell ausgewählter Index in der Liste
-            Cues.Insert(CurrentSelectedIndex + 1, new Command("Play", Cues.ElementAt(CurrentSelectedIndex), 0)); // Fügt ein neues Command direkt nach dem aktuell ausgewählten Element ein und setzt dieses als Target
-            SoundListBox.Items.Refresh(); // damit neue Elemente sofort sichtbar werden
-        }
-
+        
         private void ComboboxTargetCue_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
            if (SoundListBox.SelectedItem == null || !(SoundListBox.SelectedItem is Command cmd))
@@ -513,6 +526,31 @@ namespace EazsyPlayer
                 // Setzt das TargetCue des Commands auf die ausgewählte Sounddatei
                 cmd.TargetCue = comboBox.SelectedItem as Cue;
             }
+        }
+
+
+        /// <summary>
+        /// Aktualisiert die ListBox-Inhalte, um die Schriftfarbe der Cues zu ändern, wenn kein TargetCue gesetzt ist und führt danach einen Refresh der Listbox aus.
+        /// </summary>
+        private void SoundListBox_RefreshListContent()
+        {
+            //foreach (var cue in Cues)
+            //{
+            //    if (cue is Command cmd)
+            //    {
+            //        if (cmd.GetTargetCue() == null)
+            //        {
+            //            ListBoxItem LstItem = SoundListBox.Items[Cues.IndexOf(cmd)] as ListBoxItem;
+            //            LstItem.Foreground = Brushes.Red; // Setzt die Schriftfarbe auf Rot, wenn kein TargetCue gesetzt ist
+            //        } else
+            //        {
+            //            ListBoxItem LstItem = SoundListBox.Items[Cues.IndexOf(cmd)] as ListBoxItem;
+            //            LstItem.Foreground = Brushes.Black; // Setzt die Schriftfarbe auf Schwarz, wenn ein TargetCue gesetzt ist   
+            //        }
+            //    }
+            //}
+
+            SoundListBox.Items.Refresh(); // Aktualisiert die ListBox, um Änderungen an den Cues anzuzeigen
         }
 
         // DragStart-Position merken
@@ -585,7 +623,7 @@ namespace EazsyPlayer
                         Cues.Add(sf);
                     }
                 }
-                SoundListBox.Items.Refresh();
+                SoundListBox_RefreshListContent(); // Aktualisiert die ListBox, um neue Cues anzuzeigen
                 SoundListBox.SelectedIndex = SoundListBox.Items.Count - 1;
             }
             else if (e.Data.GetDataPresent(typeof(Cue)))
