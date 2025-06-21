@@ -185,6 +185,22 @@ namespace EazsyPlayer
             }
         }
 
+        private void StopSelectedButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (SoundListBox.SelectedItem is Soundfile sf)
+            {
+                if (sf.IsPlaying)
+                {
+                    sf.Stop(); // Stoppt den Sound
+                }
+            }
+            else if (SoundListBox.SelectedItem is Command cmd)
+            {
+                cmd.Stop(); // Stoppt das Command
+            }
+        }
+
+
         /// <summary>
         /// Event-Handler für den Klick auf den "Stop All Sounds" Button
         /// </summary>
@@ -338,7 +354,7 @@ namespace EazsyPlayer
             if ( SoundListBox.SelectedItem is Command cmd)
             {
                 var soundfiles = Cues.OfType<Soundfile>().ToList();
-                cmbTargetCue.ItemsSource = soundfiles; // Füllt die ComboBox mit den verfügbaren Sounddateien
+                cmbTargetCue.ItemsSource = soundfiles; // Füllt die TargetCue ComboBox mit den verfügbaren Sounddateien
                 cmbTargetCue.SelectedIndex = soundfiles.IndexOf(cmd.TargetCue as Soundfile); // Setzt den Wert auf die aktuelle TargetCue des Commands
                 cmbCommand.ItemsSource = Command.CommandList; // Füllt die ComboBox mit den verfügbaren Commands
                 cmbCommand.SelectedIndex = Command.CommandList.IndexOf(cmd.CommandType); // Setzt den Wert auf den aktuellen Command-Typ des Commands
@@ -423,7 +439,6 @@ namespace EazsyPlayer
             if (soundfile != null)
             {
                 soundfile.IsAutoPlayNext = true;
-                // Weitere Logik
             }
         }
 
@@ -439,7 +454,6 @@ namespace EazsyPlayer
             if (soundfile != null)
             {
                 soundfile.IsAutoPlayNext = false;
-                // Weitere Logik
             }
         }
 

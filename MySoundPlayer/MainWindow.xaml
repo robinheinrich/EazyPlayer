@@ -76,7 +76,8 @@
         <StackPanel Margin="10" Width="Auto">
             <StackPanel Margin="10" Orientation="Horizontal">
                 <Label Content="EazyPlayer" Style="{StaticResource MyHeaderStyle}" Height="Auto" Width="675" Margin="0,0,0,0" VerticalAlignment="Center"/>
-                <Button x:Name="OKButton" Content="Go" Background="Green" Width="80" Height="60" Click="PlaySoundButton_Click" VerticalAlignment="Center"/>
+                <Button x:Name="OKButton" Content="Go" Background="Green" Width="100" Height="60" Click="PlaySoundButton_Click" VerticalAlignment="Center"/>
+                <Button x:Name="StopSelectedButton" Content="Stop Selected" Margin="25 0 0 0" Background="Red" Width="100" Height="60" Click="StopSelectedButton_Click" VerticalAlignment="Center"/>
                 <Button x:Name="FadeAndStopButton" Background="Red" Margin="25 0 0 0" Width="100" Height="60" Click="FadeAndStopButton_Click" VerticalAlignment="Center">
                     <TextBlock TextAlignment="Center">
                         Fade and
@@ -134,7 +135,7 @@
             
             <!-- Bottom Section -->
             <StackPanel Margin="10" Orientation="Horizontal" HorizontalAlignment="Stretch" Width="Auto">
-                <Button Content="Add Sound" Width="100" Height="60" Click="AddSoundButton_Click" VerticalAlignment="Center"/>
+                <Button Content="Add Sound" Width="100" Height="60" Margin="0 0 25 0" Click="AddSoundButton_Click" VerticalAlignment="Center"/>
                 <Button Content="Add Command" Width="100" Height="60" Click="AddCommand_Click"/>
                 <Grid Margin="10" VerticalAlignment="Center" Width="Auto">
                     <Grid.ColumnDefinitions>

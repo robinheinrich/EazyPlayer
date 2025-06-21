@@ -38,7 +38,7 @@ namespace EazsyPlayer
             {
             return $"{CommandType} ==> {TargetCue?.ToString()}";
             }
-            return "No target cue set";
+            return $"{CommandType} ==> No target cue set";
         }
 
         public override void Play()
