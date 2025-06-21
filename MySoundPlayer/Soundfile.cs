@@ -11,13 +11,6 @@ namespace EazsyPlayer.Audio
     public class Soundfile : Cue, IDisposable, INotifyPropertyChanged
     {
         public event EventHandler PlaybackFinished;
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
         private IWavePlayer outputDevice;
         private AudioFileReader audioFile;
         private ISampleProvider trimmedProvider;
@@ -33,19 +26,6 @@ namespace EazsyPlayer.Audio
         public double Duration => audioFile?.TotalTime.TotalSeconds ?? 0;
         public double AudioFileCurrentTime => audioFile?.CurrentTime.TotalSeconds ?? 0;
 
-        private bool _isAutoPlayNext;
-        public bool IsAutoPlayNext
-        {
-            get => _isAutoPlayNext;
-            set
-            {
-                if (_isAutoPlayNext != value)
-                {
-                    _isAutoPlayNext = value;
-                    OnPropertyChanged(nameof(IsAutoPlayNext));
-                }
-            }
-        }
 
         private double _currentPosition;
         public double CurrentPosition

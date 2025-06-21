@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace EazsyPlayer
 {
@@ -10,6 +7,29 @@ namespace EazsyPlayer
     {
         string CueName { get; set; }
         object TargetCue { get; set; }
+        private bool _isAutoPlayNext;
+
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public bool IsAutoPlayNext
+        {
+            get => _isAutoPlayNext;
+            set
+            {
+                if (_isAutoPlayNext != value)
+                {
+                    _isAutoPlayNext = value;
+                    OnPropertyChanged(nameof(IsAutoPlayNext));
+                }
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
 
         public string toString()
         {
