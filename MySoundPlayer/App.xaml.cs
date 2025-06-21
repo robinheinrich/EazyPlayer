@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace MySoundPlayer
+namespace EazsyPlayer
 {
     /// <summary>
     /// Interaktionslogik für "App.xaml"

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
 
-namespace MySoundPlayer.Audio
+namespace EazsyPlayer.Audio
 {
     public class Soundfile : Cue, IDisposable, INotifyPropertyChanged
     {

@@ -3,9 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:MySoundPlayer"
-        xmlns:audio="clr-namespace:MySoundPlayer.Audio"    
-        xmlns:Properties="clr-namespace:MySoundPlayer.Properties" x:Class="MySoundPlayer.MainWindow"
+        xmlns:local="clr-namespace:EazsyPlayer"
+        xmlns:audio="clr-namespace:EazsyPlayer.Audio"    
+        xmlns:Properties="clr-namespace:EazsyPlayer.Properties" x:Class="EazsyPlayer.MainWindow"
         mc:Ignorable="d"
         Title="EazyPlayer" Height="700" Width="1300"
         Background="Black" ResizeMode="CanMinimize">

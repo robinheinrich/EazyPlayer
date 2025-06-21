@@ -1,11 +1,10 @@
 ﻿
 using System;
 using System.Collections.ObjectModel;
-using MySoundPlayer.Audio;
+using EazsyPlayer.Audio;
 
-namespace MySoundPlayer
+namespace EazsyPlayer
 {
-    
     class Command : Cue
     {
         public static ObservableCollection<string> CommandList { get; } = new ObservableCollection<string> { 
@@ -14,7 +13,6 @@ namespace MySoundPlayer
             "Stop",
             "Play"
         };
-
 
         public Cue TargetCue { get; set; } = null;
         public string CommandType { get; set; } = null;
