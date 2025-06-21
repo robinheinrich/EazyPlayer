@@ -167,8 +167,15 @@ namespace EazsyPlayer.Audio
 
         public override void  Stop()
         {
-            outputDevice?.Stop();
-            IsPlaying = false;
+            if (this.IsPlaying == false)
+            {
+                this.Rewind(); // Wenn die Datei nicht abgespielt wird, auf Anfang zurücksetzen (Doppltes Klicken auf Stop sollte die Datei immer zurücksetzen)
+            }
+            else
+            {
+                outputDevice?.Stop();
+                IsPlaying = false;
+            }
         }
 
         public void Pause()

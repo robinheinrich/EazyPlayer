@@ -24,6 +24,7 @@ namespace EazsyPlayer
                 }
             }
         }
+        
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
