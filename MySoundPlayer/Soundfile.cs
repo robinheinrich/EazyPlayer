@@ -21,7 +21,7 @@ namespace EazsyPlayer.Audio
 
         public string DisplayName { get; private set; }
         public bool IsPlaying { get; private set; } = false;
-        public int UsedAudiodevice { get; internal set; } = 1;
+        public int UsedAudiodevice { get; internal set; } = 0;
         public float TrackVolume { get; set; } = 1.0f; // Default volume set to 1.0 (100%)
         public double Duration => audioFile?.TotalTime.TotalSeconds ?? 0;
         public double AudioFileCurrentTime => audioFile?.CurrentTime.TotalSeconds ?? 0;
@@ -52,6 +52,11 @@ namespace EazsyPlayer.Audio
             Load(filePath, start, end);
         }
 
+        private IWavePlayer CreateOutputDevice(int BufferInMilliseconds = 200)
+        {
+            return new WaveOutEvent { DeviceNumber = UsedAudiodevice, DesiredLatency = BufferInMilliseconds };
+        }
+
         public void Load(string filePath, TimeSpan? start = null, TimeSpan? end = null)
         {
             if (string.IsNullOrEmpty(filePath)) return;
@@ -59,7 +64,7 @@ namespace EazsyPlayer.Audio
             Dispose();
 
             audioFile = new AudioFileReader(filePath);
-
+            
             double startSec = start?.TotalSeconds ?? 0;
             double endSec = end?.TotalSeconds ?? audioFile.TotalTime.TotalSeconds;
             trimmedProvider = new OffsetSampleProvider(audioFile)
@@ -78,16 +83,14 @@ namespace EazsyPlayer.Audio
                 outputDevice = CreateOutputDevice();
                 outputDevice.PlaybackStopped += OnPlaybackStopped;
                 outputDevice.Init(trimmedProvider);
+
+                Console.WriteLine($"Quelle: " + audioFile.WaveFormat);
+                Console.WriteLine($"Ziel: " + outputDevice.OutputWaveFormat);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Fehler beim Initialisieren des Audiogeräts: {ex.Message}");
             }
-        }
-
-        private IWavePlayer CreateOutputDevice()
-        {
-            return new WaveOutEvent { DeviceNumber = UsedAudiodevice };
         }
 
         public void Seek(TimeSpan position)
