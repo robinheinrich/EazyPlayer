@@ -16,6 +16,7 @@ namespace EazsyPlayer.Audio
         private ISampleProvider trimmedProvider;
         private VolumeSampleProvider volumeProvider;
 
+        private int MySampleRate = 48000;
         public TimeSpan startTime { get; set; } = TimeSpan.Zero;
         public TimeSpan endTime { get; set; }
 
@@ -72,17 +73,30 @@ namespace EazsyPlayer.Audio
                 SkipOver = TimeSpan.FromSeconds(startSec),
                 Take = TimeSpan.FromSeconds(endSec - startSec)
             };
+
+            int targetSampleRate = MySampleRate;
+            if (audioFile.WaveFormat.SampleRate != targetSampleRate)
+            {
+                trimmedProvider = new WdlResamplingSampleProvider(trimmedProvider, targetSampleRate);
+                Console.WriteLine($"Resampling von {audioFile.WaveFormat.SampleRate} Hz auf {targetSampleRate} Hz.");
+            }
+
+            //var pcmProvider = new SampleToWaveProvider16(trimmedProvider);
+            //trimmedProvider = new WaveToSampleProvider(pcmProvider);
+
             volumeProvider = new VolumeSampleProvider(trimmedProvider);
             volumeProvider.Volume = 1.0f;
 
             trimmedProvider = volumeProvider;
             DisplayName = System.IO.Path.GetFileName(filePath);
 
+
+
             try
             {
                 outputDevice = CreateOutputDevice();
                 outputDevice.PlaybackStopped += OnPlaybackStopped;
-                outputDevice.Init(trimmedProvider);
+                outputDevice.Init(trimmedProvider, true);
 
                 Console.WriteLine($"Quelle: " + audioFile.WaveFormat);
                 Console.WriteLine($"Ziel: " + outputDevice.OutputWaveFormat);
@@ -106,7 +120,6 @@ namespace EazsyPlayer.Audio
             {
                 outputDevice?.Stop();
                 outputDevice?.Dispose();
-
                 outputDevice = CreateOutputDevice();
                 outputDevice.PlaybackStopped += OnPlaybackStopped;
                 outputDevice.Init(trimmedProvider);
